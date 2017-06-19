@@ -1,0 +1,13 @@
+<md-card md-theme="default" md-theme-watch class="resultCard">
+	<md-card-title>
+		<md-card-title-text style="display: inline-block">
+			
+			<span class="md-headline"><i class="material-icons">person</i> <a ui-sref="donor({_id: d._id})" style="text-decoration:none">{{d.name}}</a></span>
+			<div style="display:block; float: right">
+			<span class="md-subhead">{{d.idType}} {{d.idValue}}</span>
+			<br>
+			<span style="font-size: 12px" ng-if="d.lastDonation"><strong>Ultima donacion:</strong> {{d.lastDonation | date: "dd/MM/yyyy"}}</span>
+			</div>
+		</md-card-title-text>
+	</md-card-title>
+</md-card>

@@ -1,0 +1,126 @@
+<md-content flex layout-padding style="height: 456px;">
+	<div>
+		<form name="userForm">
+			<div layout-gt-xs="row">
+				<md-input-container class="md-block" flex-gt-xs>
+					<label>Nombre</label>
+					<input ng-model="donor.name">
+				</md-input-container>
+
+				<input type="date"
+				   ng-model="donor.birthday"
+				   min="1930-01-01"
+				   class="md-input">
+			</div>
+			
+			<div layout-gt-xs="row">
+				<md-input-container class="md-block" flex-gt-xs>
+					<label>Tipo de Identificacion</label>
+					<md-select ng-model="donor.idType">
+						<md-option ng-repeat="idType in idTypes" value="{{idType}}">
+							{{idType}}
+						</md-option>
+					</md-select>
+				</md-input-container>
+				
+				<md-input-container class="md-block" flex-gt-xs>
+					<label>Identificacion</label>
+					<input ng-model="donor.idValue">
+				</md-input-container>
+				
+				
+				<md-input-container class="md-block" flex-gt-xs>
+					<label>Sexo</label>
+					<md-select ng-model="donor.gender">
+						<md-option ng-repeat="gender in genders" value="{{gender}}">
+							{{gender}}
+						</md-option>
+					</md-select>
+				</md-input-container>
+					
+				<md-input-container class="md-block" flex-gt-xs>
+					<label>Grupo sanguineo</label>
+					<md-select ng-model="donor.bloodType">
+						<md-option ng-repeat="bloodType in bloodTypes" value="{{bloodType.slug}}">
+							{{bloodType.name}}
+						</md-option>
+					</md-select>
+				</md-input-container>
+			</div>
+		
+			
+			<div layout-gt-xs="row">
+				<md-input-container class="md-block" flex-gt-xs>
+					<label>Telefonos</label>
+					<md-chips ng-model="donor.phones" md-enable-chip-edit="true">
+						<input type="text" placeholder="Ingrese un telefono y enter">
+					</md-chips>
+				</md-input-container>
+				
+				<md-input-container class="md-block" flex-gt-xs>
+					<label>Mails</label>
+					<md-chips ng-model="donor.mails" md-enable-chip-edit="true">
+						<input type="email" placeholder="Ingrese un mail y enter" ng-pattern="/^.+@.+\..+$/">
+					</md-chips>						
+				</md-input-container>
+			</div>
+			
+			<md-input-container class="md-block" flex-gt-lg>
+				<label>Comentarios</label>
+				<textarea ng-model="donor.comments" md-maxlength="300" md-select-on-focus></textarea>
+			</md-input-container>
+			
+		</form>
+		<div>
+			<md-button class="md-raised md-primary" ng-click="save()" ng-mouseenter="showTooltipSave=true" ng-mouseleave="showTooltipSave=false">
+				<md-tooltip md-direction="top" style="font-size:18px;">
+					Guardar
+				</md-tooltip>
+				<i class="material-icons">
+					save
+				</i>
+			</md-button>
+			
+			<md-button class="md-raised md-warn" ng-disabled="!donor._id" ng-click="delete()" ng-mouseenter="showTooltipSave=true" ng-mouseleave="showTooltipSave=false">
+				<md-tooltip md-direction="top" style="font-size:18px;">
+					Borrar
+				</md-tooltip>
+				<i class="material-icons">
+					delete
+				</i>
+			</md-button>
+			
+			<md-button class="md-raised" ng-disabled="!donor._id" ng-click="sendMail($event)" ng-mouseenter="showTooltipSave=true" ng-mouseleave="showTooltipSave=false">
+				<md-tooltip md-direction="top" style="font-size:18px;">
+					Enviar mail
+				</md-tooltip>
+				<i class="material-icons">
+					mail_outline
+				</i>
+			</md-button>
+			
+			<md-button class="md-raised" ng-if="donor._id" ng-click="theDonations()">
+				<md-tooltip md-direction="top" style="font-size:18px;">
+					Ver donaciones
+				</md-tooltip>
+				<i class="material-icons">
+					visibility
+					opacity
+				</i>
+			</md-button>
+			
+			<md-button class="md-raised" ng-if="donor._id" ng-click="addDonation()">
+				<md-tooltip md-direction="top" style="font-size:18px;">
+						Agregar donacion
+				</md-tooltip>
+				<i class="material-icons">
+					add
+					opacity
+				</i>
+			</md-button>
+		</div>
+		<div style="float: right;" ng-if="donor.lastDonation">
+			Ultima donacion {{donor.lastDonation | date: 'dd/MM/yyyy'}}
+		</div>
+	</div>
+</md-content>

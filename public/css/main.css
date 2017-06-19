@@ -1,0 +1,134 @@
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: url(../fonts/MaterialIcons-Regular.eot); /* For IE6-8 */
+  src: local('Material Icons'),
+       local('MaterialIcons-Regular'),
+       url(../fonts/MaterialIcons-Regular.woff2) format('woff2'),
+       url(../fonts/MaterialIcons-Regular.woff) format('woff'),
+       url(../fonts/MaterialIcons-Regular.ttf) format('truetype');
+}
+
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Support for IE. */
+  font-feature-settings: 'liga';
+}
+
+.md-button{
+	border-bottom-color: #CC0000;	
+}
+
+.md-nav-bar{
+	background-color:#CCCCCC;
+	color: white;
+	height:auto;
+}
+
+._md-nav-button-text i{
+    font-size: 48px;
+}
+
+.md-toolbar-tools{
+	color: white;
+	background-color: #CC0000;
+}
+
+.md-nav-item a:hover{
+	color: #CC0000 !important;	
+}
+
+.md-button.md-default-theme.md-accent, .md-button.md-accent{
+	color: #CC0000;
+}
+
+.md-chip-input-container{
+	height: 32px;
+}
+
+.md-button.md-default-theme.md-fab, .md-button.md-fab {
+    background-color: #CC0000;
+    color: white);
+}
+.md-button.md-default-theme.md-fab:not([disabled]):hover, .md-button.md-fab:not([disabled]):hover {
+    background-color: #CC0000;
+}
+
+.donorAdd{
+	z-index: 999;
+	position: fixed;
+	right: 5%;
+	padding: 8px;
+	bottom: 5%;
+}
+
+input[type=date]{
+    border-top: none;
+    border-right: none;
+    border-left: none;
+    border-image: initial;
+    background-color: rgb(250, 250, 250);
+    border-bottom: 1px solid rgb(204, 204, 204);
+    height: 50px;
+    padding-top: 24px;
+}
+
+input[type=date]:focus{
+	outline: none;
+	border-bottom: 2px solid rgb(63,81,181);
+}
+
+
+.resultCard span{
+	color: rgba(0,0,0,0.54);
+}
+
+.resultCard a{
+	color: rgba(0,0,0,0.54);
+}
+
+.resultCard:hover a{
+	color: #CC0000;
+}
+
+
+.resultCard:hover span{
+	color: #CC0000;
+}
+
+
+md-card {
+	height: 60px;
+}
+
+md-card md-card-title{
+	padding: 16px 16px 16px 16px;
+}
+
+.linkTachado{
+	text-decoration: line-through;
+}
+
+.linkNoTachado{
+	text-decoration: none;
+}

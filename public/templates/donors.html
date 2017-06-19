@@ -1,0 +1,36 @@
+<md-content flex layout-padding">
+	<div ng-if="donors.length > 0">
+		<div ng-repeat="d in donors" ng-include="'static/templates/donors.result.html'">
+			
+		</div>
+		
+		<div style="text-align: center">
+			<md-button class="md-raised" ng-disabled="currentPage == 0" ng-click="previousPage()" ng-mouseenter="showTooltipBack=true" ng-mouseleave="showTooltipBack=false">
+				<md-tooltip md-direction="top" style="font-size:18px;">
+					Anteriores
+				</md-tooltip>
+				<i class="material-icons">
+					undo
+				</i>
+			</md-button>
+			<md-button class="md-raised" ng-click="nextPage()" ng-mouseenter="showTooltipNext=true" ng-mouseleave="showTooltipNext=false">
+				<md-tooltip md-direction="top" style="font-size:18px;">
+					Siguientes
+				</md-tooltip>
+				<i class="material-icons">
+					redo
+				</i>
+			</md-button>
+		</div>
+	</div>
+	<div ng-if="donors.length == 0">
+		No se encontraron donantes
+	</div>
+</md-content>
+
+<md-button ui-sref="donor" class="md-fab donorAdd" aria-label="Agregar donante" ng-mouseenter="showTooltip=true" ng-mouseleave="showTooltip=false">
+		<md-tooltip md-direction="top" style="font-size:18px;">
+			Agregar donante
+        </md-tooltip>
+		<i class="material-icons" style="font-size:32px;padding-top:3px">add</i>
+</md-button>

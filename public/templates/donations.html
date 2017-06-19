@@ -1,0 +1,20 @@
+<md-content flex layout-padding">
+	<div ng-if="donations.length > 0">
+		<div ng-repeat="d in donations" ng-include="'static/templates/donations.result.html'">
+			
+		</div>
+	</div>
+	<div ng-if="donations.length == 0">
+		No se encontraron donaciones
+	</div>
+</md-content>
+
+
+
+
+<md-button ui-sref="donation" class="md-fab donorAdd" aria-label="Agregar donacion" ng-mouseenter="showTooltip=true" ng-mouseleave="showTooltip=false">
+		<md-tooltip md-direction="top" style="font-size:18px;">
+			Agregar donacion
+        </md-tooltip>
+		<i class="material-icons" style="font-size:32px;padding-top:3px">add</i>
+</md-button>

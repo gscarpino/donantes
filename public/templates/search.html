@@ -1,0 +1,118 @@
+
+<md-content flex layout-padding>
+	Donantes que no donan desde 
+	<div layout-gt-xs="row">
+		<md-input-container class="md-block" flex-gt-xs>
+			<label>por</label>
+			<md-select ng-model="query.lastDonationSearchType" ng-change="resetQuery()">
+				<md-option value="Periodo" selected>
+					Periodo
+				</md-option>
+				<md-option value="Fecha">
+					Fecha
+				</md-option>
+			</md-select>
+		</md-input-container>
+		<md-input-container class="md-block" flex-gt-xs ng-if="query.lastDonationSearchType=='Periodo'">
+			<label>Cantidad</label>
+			<input ng-model="query.lastDonationSearchValue[0]" type="number">
+		</md-input-container>
+		
+		<md-input-container class="md-block" flex-gt-xs ng-if="query.lastDonationSearchType=='Periodo'">
+			<md-select ng-model="query.lastDonationSearchValue[1]">
+				<md-option value="days" >
+					dias
+				</md-option>
+				<md-option value="months" selected>
+					meses
+				</md-option>
+				<md-option value="years">
+					años
+				</md-option>
+			</md-select>
+		</md-input-container>
+			
+		<md-input-container flex-lg ng-if="query.lastDonationSearchType=='Fecha'">
+			<label>Fecha</label>
+			<md-datepicker ng-model="query.lastDonationSearchValue"></md-datepicker>
+		</md-input-container>
+	</div>
+	
+	
+	<div layout-gt-xs="row">
+		<md-input-container class="md-block" flex-gt-xs>
+			<label>Grupo sanguineo</label>
+			<md-select ng-model="query.bloodType">
+				<md-option value="-" selected>
+					-
+				</md-option>
+				<md-option ng-repeat="bloodType in bloodTypes" value="{{bloodType}}">
+					{{bloodType}}
+				</md-option>
+			</md-select>
+			
+		</md-input-container>
+	
+		<md-input-container class="md-block" flex-gt-xs>
+			<label>Lugar de donacion</label>
+			<input ng-model="query.donationPlace">
+		</md-input-container>
+		
+		<md-input-container class="md-block" flex-gt-xs>
+			<label>Tipo de utlima donacion</label>
+			<md-select ng-model="query.lastDonationType">
+				<md-option ng-repeat="donationType in donationTypes" value="{{donationType}}">
+					{{donationType}}
+				</md-option>
+			</md-select>
+		</md-input-container>
+	</div>
+
+	<md-button class="md-raised md-primary" ng-click="search()" ng-mouseenter="showTooltipSave=true" ng-mouseleave="showTooltipSave=false">
+		<md-tooltip md-direction="top" style="font-size:18px;">
+			Buscar
+		</md-tooltip>
+		<i class="material-icons">
+			find_in_page
+		</i>
+	</md-button>
+	<md-button class="md-raised" ng-disabled="!results || results.length == 0" ng-click="sendMail($event)" ng-mouseenter="showTooltipSave=true" ng-mouseleave="showTooltipSave=false">
+		<md-tooltip md-direction="top" style="font-size:18px;">
+			Enviar mail
+		</md-tooltip>
+		<i class="material-icons">
+			mail_outline
+		</i>
+	</md-button>
+	
+	Tipo de donacion de la ultima donacion: sangre o plaquetas
+		
+
+	<md-content flex layout-padding">
+		<div ng-if="results && results.length > 0">
+			Se encontraron {{results.length}} donantes:		
+			<div ng-repeat="d in results" ng-include="'static/templates/donors.result.html'">
+				
+			</div>
+			<div style="text-align: center">
+				<md-button class="md-raised" ng-disabled="currentPage == 0" ng-click="previousPage()" ng-mouseenter="showTooltipBack=true" ng-mouseleave="showTooltipBack=false">
+					<md-tooltip md-direction="top" style="font-size:18px;">
+						Anteriores
+					</md-tooltip>
+					<i class="material-icons">
+						undo
+					</i>
+				</md-button>
+				<md-button class="md-raised" ng-click="nextPage()" ng-mouseenter="showTooltipNext=true" ng-mouseleave="showTooltipNext=false">
+					<md-tooltip md-direction="top" style="font-size:18px;">
+						Siguientes
+					</md-tooltip>
+					<i class="material-icons">
+						redo
+					</i>
+				</md-button>
+			</div>
+		</div>	
+	</md-content>
+	
+</md-content>

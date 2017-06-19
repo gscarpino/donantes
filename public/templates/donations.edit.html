@@ -1,0 +1,93 @@
+<md-content flex layout-padding>
+	<div>
+	
+		<form ng-submit="$event.preventDefault()" name="searchForm">
+		
+			
+			<div layout-gt-xs="row">
+			
+			<md-autocomplete flex required
+				md-input-name="autocompleteField"
+				md-input-minlength="4"
+				md-no-cache="true"
+				md-selected-item="donation.donor"
+				md-search-text="searchText"
+				md-items="item in querySearch(searchText)"
+				md-item-text="item.name"
+				md-require-match
+				md-floating-label="Donante">
+			  <md-item-template>
+				<span md-highlight-text="searchText">{{item.name}}</span>
+			  </md-item-template>
+			</md-autocomplete>
+			</div>
+			
+			<div layout-gt-xs="row">
+			
+			<md-input-container flex-lg>
+				<label>Fecha</label>
+				<md-datepicker ng-model="donation.donationDate"></md-datepicker>
+			</md-input-container>
+			
+			<md-input-container class="md-block" flex-gt-xs>
+				<label>Tipo</label>
+				<md-select ng-model="donation.donationType">
+					<md-option ng-repeat="donationType in donationTypes" value="{{donationType}}">
+						{{donationType}}
+					</md-option>
+				</md-select>
+			</md-input-container>
+			
+			<md-input-container class="md-block" flex-gt-xs>
+				<label>En calidad de</label>
+				<md-select ng-model="donation.donorType">
+					<md-option ng-repeat="donorType in donorTypes" value="{{donorType}}">
+						{{donorType}}
+					</md-option>
+				</md-select>
+			</md-input-container>
+			
+			<md-input-container class="md-block" flex-gt-xs>
+				<md-checkbox ng-model="donation.
+				rejected" aria-label="Checkbox 1" class="md-primary" style="color: rgba(0,0,0,0.38);">
+				Rechazado
+				
+				</md-checkbox>
+			</md-input-container>
+			</div>
+			
+			<md-input-container class="md-block" flex-gt-xs>
+				<label>Lugar</label>
+				<input ng-model="donation.donationPlace">
+			</md-input-container>
+			
+			
+			<md-input-container class="md-block" flex-gt-lg>
+				<label>Comentarios</label>
+				<textarea ng-model="donation.comments" md-maxlength="300" rows="2" md-select-on-focus></textarea>
+			</md-input-container>
+			
+		</form>
+		
+		<div>
+			<md-button class="md-raised md-primary" ng-click="save()" ng-mouseenter="showTooltipSave=true" ng-mouseleave="showTooltipSave=false">
+				<md-tooltip md-direction="top" style="font-size:18px;">
+					Guardar
+				</md-tooltip>
+				<i class="material-icons">
+					save
+				</i>
+			</md-button>
+			
+			<md-button class="md-raised md-warn" ng-disabled="!donation._id" ng-click="delete()" ng-mouseenter="showTooltipSave=true" ng-mouseleave="showTooltipSave=false">
+				<md-tooltip md-direction="top" style="font-size:18px;">
+					Borrar
+				</md-tooltip>
+				<i class="material-icons">
+					delete
+				</i>
+			</md-button>
+		</div>
+	</div>
+	
+</md-content>

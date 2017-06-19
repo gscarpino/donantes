@@ -1,0 +1,51 @@
+<md-dialog aria-label="Envio de mail al donante" style="min-width:600px">
+  <form ng-cloak>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Envio de mail al donante</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+		<i class="material-icons">
+			close
+		</i>
+        </md-button>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+		<div class="md-dialog-content">
+			<div layout-gt-xs="row">
+				<md-input-container class="md-block" flex-gt-xs>
+					<label>Para</label>
+					<input ng-if="mail.to.length > 0" ng-model="mail.to[0]" disabled>
+					<input ng-if="mail.to.length == 0" ng-model="tmpMail">
+				</md-input-container>
+			</div>
+			<div layout-gt-xs="row">
+				<md-input-container class="md-block" flex-gt-xs>
+					<label>Asunto</label>
+					<input ng-model="mail.subject">
+				</md-input-container>
+			</div>
+			<div layout-gt-xs="row">
+				<md-input-container class="md-block" flex-gt-xs>
+					<trix-editor angular-trix ng-model="mail.body"></trix-editor>
+					<!--textarea ng-model="" rows="5" md-select-on-focus></textarea-->
+				</md-input-container>
+			</div>
+		</div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button ng-click="send(mail)" class="md-raised md-primary" ng-mouseenter="showTooltipSave=true" ng-mouseleave="showTooltipSave=false">
+				<md-tooltip md-direction="top" style="font-size:18px;">
+					Enviar mail
+				</md-tooltip>
+		<i class="material-icons">
+			send
+		</i>
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

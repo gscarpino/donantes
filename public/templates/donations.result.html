@@ -1,0 +1,21 @@
+<md-card md-theme="default" md-theme-watch class="resultCard">
+	<md-card-title>
+		<md-card-title-text style="display: inline-block">			
+			<span class="md-headline">
+				<a ui-sref="donation({_id: d._id})" style="text-decoration: none;" >
+					{{d.donationDate | date: "dd/MM/yyyy"}} | {{d.donor.name}}
+				</a>
+				<md-tooltip ng-if="d.rejected" md-direction="top" style="font-size:18px;">
+					Donacion rechazada
+				</md-tooltip>
+			</span>
+			<div style="display:block; float: right">
+				<span class="md-subhead">
+					<i class="material-icons" ng-if="d.rejected" >invert_colors_off</i></span>
+				<br>
+				<span style="font-size: 12px" ng-if="d.donationPlace"><strong>{{d.donationType}} | Lugar:</strong> {{d.donationPlace}}</span>
+				<span style="font-size: 12px" ng-if="!d.donationPlace"><strong>{{d.donationType}}</strong></span>
+			</div>
+		</md-card-title-text>
+	</md-card-title>
+</md-card>
