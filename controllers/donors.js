@@ -139,7 +139,7 @@ module.exports = {
 			delete q.skip;
 			delete q.size;
 			delete q.sort;
-			
+			console.log(q)
 			models.donors.find(q, {}, {limit: limit, skip: skip},function(err, docs){
 				if(err){
 					console.log("Error buscando: ", err);

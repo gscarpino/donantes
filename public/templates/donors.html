@@ -23,7 +23,7 @@
 			</md-button>
 		</div>
 	</div>
-	<div ng-if="donors.length == 0">
+	<div ng-if="!donors || donors.length == 0">
 		No se encontraron donantes
 	</div>
 </md-content>
