@@ -1,43 +1,42 @@
-var models = require('../db/schemas.js'),
-	moment = require('moment');
+var moment = require('moment');
 
 module.exports = {
-	init: function(app){
-			
+	init: function(app, models){
+
 		app.post('/donation', function (req, res, next) {
-			
+
 			if(!req.body.donor || !req.body.donationDate){
 				return res.status(400).send('Incomplete item');
 			}
-			
+
 			var item = JSON.parse(JSON.stringify(req.body));
-			
+
 			var _donation = new models.donations(item);
-			
+
 			_donation.save(function(errSave){
 				if(errSave){
 					console.log("Error guardado en tingodb");
 					console.log(err);
 					res.status(500).send('No se pudo guardar la donacion');
 				}
-				
+
 				updateDonorLastDonation(item.donor, item.donationDate, function(){
 					return res.jsonp(_donation.toObject());
 				});
 			});
-			
+
 		});
 
 		app.put('/donation', function (req, res, next) {
-			
+
 			if(!req.body._id){
 				return res.status(400).send('Incomplete item');
 			}
-			
+
 			var item = JSON.parse(JSON.stringify(req.body));
-			
+
 			item.modificatedAt = new Date();
-			
+
 			models.donations.findOneAndUpdate({_id: item._id},item, function(err, doc){
 				if(err){
 					console.log("Error update en tingodb");
@@ -47,12 +46,12 @@ module.exports = {
 				else{
 					console.log("Document updated!")
 				}
-				
+
 				rebuildDonorLastDonation(item.donor, function(){
 					return res.jsonp(doc.toObject());
 				});
 			});
-			
+
 		});
 
 		app.delete('/donation', function (req, res, next) {
@@ -60,26 +59,26 @@ module.exports = {
 			if(!req.body._id){
 				return res.status(400).send('No se puede eliminar la donacion sin identificar');
 			}
-			
+
 			models.donations.remove({_id: req.body._id}, function(err, doc){
 				if(err){
 					console.log("Error borrando en tingodb");
 					console.log(err);
 					return res.status(500).send('No se pudo eliminar la donacion');
 				}
-				
+
 				rebuildDonorLastDonation(req.body.donor, function(){
 					return res.jsonp(req.body);
 				});
 			});
-			
+
 		});
-		
+
 		app.get('/donation/:id', function(req, res){
 			if(!req.params.id){
 				return res.status(400).send('No se encontro al donante');
 			}
-			
+
 			models.donations
 				.findOne({_id: req.params.id})
 				.populate('donor')
@@ -94,12 +93,12 @@ module.exports = {
 		});
 
 		app.get('/donations/search', function(req, res){
-			
-			if(!req.query.q) 
+
+			if(!req.query.q)
 				var q = {};
 			else
 				var q = JSON.parse(req.query.q);
-			
+
 			var limit = req.query.size ? Number(req.query.size) : 50;
 			var skip = req.query.skip ? Number(req.query.skip) : 0;
 
@@ -122,7 +121,7 @@ module.exports = {
 					}
 					return res.jsonp(docs);
 				});
-			
+
 		})
 
 		var updateDonorLastDonation = function(id, donationDate, cb){
@@ -146,14 +145,14 @@ module.exports = {
 				}
 			});
 		};
-		
+
 		var rebuildDonorLastDonation = function(id, cb){
 			var q = {
 				donor: {
 					_id: id
 				}
 			};
-			
+
 			models.donations.find(q, function(err, results){
 				if(err){
 					console.log("No se pudo actualizar la informacion de ultima donacion del donante " + id);
@@ -200,6 +199,6 @@ module.exports = {
 				}
 			});
 		};
-	
+
 	}
 }

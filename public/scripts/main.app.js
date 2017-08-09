@@ -1,26 +1,26 @@
 angular.module( 'donantesApp', [ 'ngMaterial', 'ui.router', 'dontantesModule', 'donacionesModule', 'angularMoment', 'angularTrix'] )
 
 .config(function($stateProvider){
-	
+
 	var initState = {
 		name: 'home',
 		url: '/',
-		templateUrl: 'http://127.0.0.1:9300/static/templates/home.html'
+		templateUrl: 'static/templates/home.html'
 	}
-	
+
 	var searchState = {
 		name: 'search',
 		url: '/busqueda',
-		templateUrl: 'http://127.0.0.1:9300/static/templates/search.html',
+		templateUrl: 'static/templates/search.html',
 		controller: function($scope, $http, siteFactory, $mdDialog){
-			
+
 			$scope.bloodTypes = ['A+','A-','B+','B-','AB+','AB-','0+','0-'];
-			
+
 			$scope.donationTypes = ["Sangre", "Plaquetas"];
 			$scope.query = {};
 			$scope.results = [];
 			$scope.currentPage = 0;
-			
+
 			$scope.search = function(){
 				var lastDonation = false;
 				if($scope.query.lastDonationSearchType == "Fecha"){
@@ -29,11 +29,11 @@ angular.module( 'donantesApp', [ 'ngMaterial', 'ui.router', 'dontantesModule', '
 						siteFactory.toast("No se ha especificado una fecha");
 						return;
 					}
-					
+
 					var _lastDonationValue = $scope.query.lastDonationSearchValue;
 				}
-				
-				
+
+
 				if($scope.query.lastDonationSearchType == "Periodo"){
 					lastDonation = true;
 					var substractionDays = $scope.query.lastDonationSearchValue[0];
@@ -43,14 +43,14 @@ angular.module( 'donantesApp', [ 'ngMaterial', 'ui.router', 'dontantesModule', '
 					else if($scope.query.lastDonationSearchValue[1] == 'years'){
 						substractionDays *= 365;
 					}
-					
+
 					//TODO: con momment crear la fecha de hoy y restarle substractionDays!!!
 					var _lastDonationValue = moment().subtract(substractionDays, 'days').format("YYYY/MM/DD HH:mm:ss");
 				}
-				
-				
+
+
 				var q = {};
-				
+
 				if(lastDonation){
 					q.lastDonation = {
 						$lt: _lastDonationValue
@@ -60,7 +60,7 @@ angular.module( 'donantesApp', [ 'ngMaterial', 'ui.router', 'dontantesModule', '
 				if($scope.query.bloodType && $scope.query.bloodType != '-'){
 					q.bloodType = $scope.query.bloodType.replace("-", "-minus").replace("+", "-plus").toLowerCase();
 				}
-				
+
 				if($scope.query.donationPlace){
 					q.donationPlace = $scope.query.donationPlace;
 				}
@@ -70,9 +70,9 @@ angular.module( 'donantesApp', [ 'ngMaterial', 'ui.router', 'dontantesModule', '
 				}
 
 				$scope.parsedQuery = q;
-				
+
 				$scope.searchWithQuery(q);
-				
+
 			};
 
 			$scope.nextPage = function(){
@@ -89,13 +89,13 @@ angular.module( 'donantesApp', [ 'ngMaterial', 'ui.router', 'dontantesModule', '
 
 			$scope.searchWithQuery = function(query){
 				var query = encodeURI(JSON.stringify(query));
-				var url = 'http://127.0.0.1:9300/donors/search?q=' + query + '&sort=modificatedAt';
-				
+				var url = 'donors/search?q=' + query + '&sort=modificatedAt';
+
 				$http({method: 'GET', url: url}).then (function (data) {
 					$scope.results = data.data;
 				});
 			};
-			
+
 			$scope.resetQuery = function(){
 				if($scope.query.lastDonationSearchType == 'Fecha'){
 					$scope.query.lastDonationSearchValue = undefined;
@@ -104,7 +104,7 @@ angular.module( 'donantesApp', [ 'ngMaterial', 'ui.router', 'dontantesModule', '
 					$scope.query.lastDonationSearchValue = [];
 				}
 			};
-			
+
 			$scope.sendMail = function(ev){
 				if(!$scope.results || $scope.results.length == 0){
 					return;
@@ -124,7 +124,7 @@ angular.module( 'donantesApp', [ 'ngMaterial', 'ui.router', 'dontantesModule', '
 						  $mdDialog.hide(mail);
 						};
 					},
-					templateUrl: 'http://127.0.0.1:9300/static/templates/donor.mail.html',
+					templateUrl: 'static/templates/donor.mail.html',
 					parent: angular.element(document.body),
 					targetEvent: ev,
 					clickOutsideToClose:true,
@@ -135,7 +135,7 @@ angular.module( 'donantesApp', [ 'ngMaterial', 'ui.router', 'dontantesModule', '
 				})
 				.then(function(send) {
 					if(send){
-						$http({method: 'POST', url: ('http://127.0.0.1:9300/mail/'), data: send}).then(
+						$http({method: 'POST', url: ('mail/'), data: send}).then(
 							function(responseOK){
 								siteFactory.toast("Se envio el mail");
 							},
@@ -151,17 +151,17 @@ angular.module( 'donantesApp', [ 'ngMaterial', 'ui.router', 'dontantesModule', '
 			}
 		}
 	}
-	
+
 	var statsState = {
 		name: 'stats',
 		url: '/estadisticas',
-		templateUrl: 'http://127.0.0.1:9300/static/templates/stats.html'
+		templateUrl: 'static/templates/stats.html'
 	}
-	
+
 	$stateProvider.state(initState);
 	$stateProvider.state(searchState);
 	$stateProvider.state(statsState);
-	
+
 })
 
 .factory('siteFactory', function($mdToast) {
@@ -180,6 +180,6 @@ angular.module( 'donantesApp', [ 'ngMaterial', 'ui.router', 'dontantesModule', '
 })
 
 .controller("mainController", function($scope, $state, $rootScope){
-	
+
 
 })

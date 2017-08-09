@@ -1,17 +1,7 @@
-var //tungus = require('tungus'),
-	mongoose = require('mongoose'),
-	Schema = mongoose.Schema,
-	shortId = require('shortid');
+var shortId = require('shortid');
 
 
-//global.TUNGUS_DB_OPTIONS =  { nativeObjectID: true, searchInArray: true };
-
-
-mongoose.connect('mongodb://donantes:gigoju16@127.0.0.1:27017/donantes', {
-  useMongoClient: true
-});
-
-var donorSchema = Schema({
+var donorSchemaOptions = {
 	_id: {type: String, default: shortId.generate},
     name: String,
 	idType: String,
@@ -26,10 +16,10 @@ var donorSchema = Schema({
 	bloodType: String,
 	lastDonation: Date,
 	status: {type: Number, default: 201}
-});
+};
 
 
-var donationsSchema = Schema({
+var donationsSchemaOptions = {
 	_id: {type: String, default: shortId.generate},
 	donor: {type: String, ref: 'donors'},
 	donationDate: Date,
@@ -40,12 +30,60 @@ var donationsSchema = Schema({
 	modificatedAt:{type: Date, default: (new Date())},
 	createdAt: {type: Date, default: (new Date())},
 	comments: String
-});
+};
 
-donorSchema.index({lastDonation: -1})
+var mongoose,
+	Schema;
+
+var mongooseConnected = function(m, s, c){
+	var donorSchema = s(donorSchemaOptions);
+	var donationsSchema = s(donationsSchemaOptions);
+	donorSchema.index({lastDonation: -1});
+	c({
+		donors: m.model('donors', donorSchema),
+		donorsTest: m.model('donorsTest', donorSchema),
+		donations: m.model('donations', donationsSchema)
+	})
+}
 
 module.exports = {
-	donors: mongoose.model('donors', donorSchema),
-	donorsTest: mongoose.model('donorsTest', donorSchema),
-	donations: mongoose.model('donations', donationsSchema)
+	init: function(local, cb){
+		if(args.local == "true"){
+			var tungus = require('tungus');
+			mongoose = require('../node_modules/tingodb/node_modules/mongoose');
+			Schema = mongoose.Schema;
+
+			global.TUNGUS_DB_OPTIONS =  { nativeObjectID: true, searchInArray: true };
+
+			mongoose.connect(
+				'tingodb://db',
+				function (err) {
+			        if(err){
+			            console.log("Error conectando:", err);
+			            process.exit(1);
+			        }
+			        console.log("Connected to TingoDB!")
+			        mongooseConnected(mongoose, Schema, cb);
+				}
+			);
+		}
+		else{
+			mongoose = require('mongoose'),
+			Schema = mongoose.Schema;
+
+			mongoose.connect(
+				'mongodb://donantes:gigoju16@127.0.0.1:27017/donantes',
+				{
+					useMongoClient: true
+				},
+				function(err){
+					if(err){
+			            console.log("Error conectando:", err);
+			            process.exit(1);
+			        }
+				    mongooseConnected(mongoose, Schema, cb);
+				}
+			);
+		}
+	}
 }

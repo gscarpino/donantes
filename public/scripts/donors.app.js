@@ -1,14 +1,14 @@
 angular.module( 'dontantesModule', [ 'ngMaterial', 'ui.router' ] )
 
 .config(function($stateProvider){
-	
+
 	var donorsState = {
 		name: 'donors',
 		url: '/donors',
-		templateUrl: 'http://127.0.0.1:9300/static/templates/donors.html',
+		templateUrl: 'static/templates/donors.html',
 		resolve: {
 			donors:  function($http){
-				return $http({method: 'GET', url: 'http://127.0.0.1:9300/donors/search?size=10&sort=modificatedAt'})
+				return $http({method: 'GET', url: 'donors/search?size=10&sort=modificatedAt'})
 					   .then (function (data) {
 						   return data.data;
 					   });
@@ -19,18 +19,18 @@ angular.module( 'dontantesModule', [ 'ngMaterial', 'ui.router' ] )
 			$scope.optionsOpen = false;
 		}
 	}
-	
+
 	var donorState = {
 		name: 'donor',
 		url: '/donor/:_id?',
-		templateUrl: 'http://127.0.0.1:9300/static/templates/donors.edit.html',
+		templateUrl: 'static/templates/donors.edit.html',
 		resolve:{
 			donor:  function($stateParams, $http){
 				if(!$stateParams._id){
 					return {name: '', phones: [], mails: []};
 				}
 				else{
-					return $http({method: 'GET', url: 'http://127.0.0.1:9300/donor/' + $stateParams._id})
+					return $http({method: 'GET', url: 'donor/' + $stateParams._id})
 						   .then (function (data) {
 							   return data.data;
 						   });
@@ -49,13 +49,13 @@ angular.module( 'dontantesModule', [ 'ngMaterial', 'ui.router' ] )
 				{name: '0+', slug: '0-plus'},
 				{name: '0-', slug: '0-minus'}
 			];
-			
+
 			$scope.showDate = function(aDate){
 				return aDate > new Date('1910-01-01');
 			}
-			
+
 			$scope.genders = ['Femenino', 'Masculino'];
-			
+
 			if(donor){
 				donor.birthday = new Date(donor.birthday);
 				$scope.donor = donor;
@@ -68,8 +68,8 @@ angular.module( 'dontantesModule', [ 'ngMaterial', 'ui.router' ] )
 				if(!$scope.donor._id){
 					method = "POST";
 				}
-				
-				$http({method: method, url: 'http://127.0.0.1:9300/donor', data: $scope.donor}).then(
+
+				$http({method: method, url: 'donor', data: $scope.donor}).then(
 					function(responseOK){
 						if(responseOK.data._id){
 							$scope.donor._id = responseOK.data._id;
@@ -81,10 +81,10 @@ angular.module( 'dontantesModule', [ 'ngMaterial', 'ui.router' ] )
 						siteFactory.toast(responseError.data);
 					}
 				);
-					
+
 			};
-			
-			
+
+
 			$scope.delete = function(ev) {
 				// Appending dialog to document.body to cover sidenav in docs app
 				var confirm = $mdDialog.confirm()
@@ -97,16 +97,16 @@ angular.module( 'dontantesModule', [ 'ngMaterial', 'ui.router' ] )
 				$mdDialog.show(confirm).then(function() {
 					$scope.confirmDelete();
 				}, function() {
-					
+
 				});
 			};
-			
+
 			$scope.confirmDelete = function(){
 				if(!$scope.donor._id){
 					return;
 				}
-				
-				$http({method: 'DELETE', url: ('http://127.0.0.1:9300/donor/' + $scope.donor._id)}).then(
+
+				$http({method: 'DELETE', url: ('donor/' + $scope.donor._id)}).then(
 					function(responseOK){
 						$state.go('donors');
 						siteFactory.toast("Se borro el donante");
@@ -116,30 +116,30 @@ angular.module( 'dontantesModule', [ 'ngMaterial', 'ui.router' ] )
 						siteFactory.toast("NO se pudo borrar el donante");
 					}
 				);
-					
+
 			};
-			
+
 			$scope.theDonations = function(){
-				
+
 				var query = {
 					donor: {
 						_id: $scope.donor._id
 					}
 				};
-				
+
 				var queryString = encodeURI(JSON.stringify(query));
 				$state.go('donations', {q: queryString});
 			};
-			
+
 			$scope.addDonation = function(){
 				$state.go('donation', {theParams: {donor: $scope.donor}});
 			};
-			
+
 			$scope.sendMail = function(ev){
 				if(!$scope.donor._id){
 					return;
 				}
-				
+
 				$mdDialog.show({
 					controller: function($scope, $mdDialog, mails) {
 						$scope.mail = {};
@@ -153,7 +153,7 @@ angular.module( 'dontantesModule', [ 'ngMaterial', 'ui.router' ] )
 						  $mdDialog.hide(mail);
 						};
 					},
-					templateUrl: 'http://127.0.0.1:9300/static/templates/donor.mail.html',
+					templateUrl: 'static/templates/donor.mail.html',
 					parent: angular.element(document.body),
 					targetEvent: ev,
 					clickOutsideToClose:true,
@@ -164,7 +164,7 @@ angular.module( 'dontantesModule', [ 'ngMaterial', 'ui.router' ] )
 				})
 				.then(function(send) {
 					if(send){
-						$http({method: 'POST', url: ('http://127.0.0.1:9300/mail/'), data: send}).then(
+						$http({method: 'POST', url: ('mail/'), data: send}).then(
 							function(responseOK){
 								siteFactory.toast("Se envio el mail");
 							},
@@ -180,7 +180,7 @@ angular.module( 'dontantesModule', [ 'ngMaterial', 'ui.router' ] )
 			};
 		}
 	}
-	
+
 	$stateProvider.state(donorsState);
 	$stateProvider.state(donorState);
 })
