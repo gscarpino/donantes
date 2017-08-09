@@ -1,20 +1,14 @@
-var tungus = require('tungus'),
+var //tungus = require('tungus'),
 	mongoose = require('mongoose'),
 	Schema = mongoose.Schema,
 	shortId = require('shortid');
-	
-	
-global.TUNGUS_DB_OPTIONS =  { nativeObjectID: true, searchInArray: true };
 
 
-mongoose.connect('tingodb://db', function (err) {
-	if(err){ 
-		console.log("Error conectando:", err);
-		process.exit(1);
-	}
-	else{
-		console.log("Connected to MongoDB(TingoDB)!");
-	}
+//global.TUNGUS_DB_OPTIONS =  { nativeObjectID: true, searchInArray: true };
+
+
+mongoose.connect('mongodb://donantes:gigoju16@127.0.0.1:27017/donantes', {
+  useMongoClient: true
 });
 
 var donorSchema = Schema({
@@ -47,6 +41,8 @@ var donationsSchema = Schema({
 	createdAt: {type: Date, default: (new Date())},
 	comments: String
 });
+
+donorSchema.index({lastDonation: -1})
 
 module.exports = {
 	donors: mongoose.model('donors', donorSchema),
