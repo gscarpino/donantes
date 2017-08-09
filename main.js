@@ -41,13 +41,7 @@ schemas.init(args.local, function(models){
             }
         })
     }
-    initControllers(app, models)
-});
-
-
-var initControllers = function(app, models){
     mailerController.init(app, models);
     donorsController.init(app, models);
     donationsController.init(app, models);
-}
-
+});
