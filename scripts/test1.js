@@ -1,4 +1,13 @@
-var models = require('../db/schemas.js'),
+var tungus = require('tungus'),
+    mongoose = require("../node_modules/tingodb/node_modules/mongoose");
+    global.TUNGUS_DB_OPTIONS =  { nativeObjectID: true, searchInArray: true };
+    mongoose.connect('tingodb://db', function(err){
+    	if(err){
+    		console.log("Error conectando a TIngoDB", err);
+    		process.exit();
+    	}
+
+var models = require('../db/schemas3.js'),
 	async = require('async');
 
 var maxDonors = 1000,
@@ -10,15 +19,15 @@ var maxDonors = 1000,
 	minDonorAge = 18
 	bloodTypes = [
 		'a-plus',
-		'a-minus', 
-		'b-plus', 
-		'b-minus', 
-		'ab-plus', 
-		'ab-minus', 
-		'0-plus', 
+		'a-minus',
+		'b-plus',
+		'b-minus',
+		'ab-plus',
+		'ab-minus',
+		'0-plus',
 		'0-minus'
 	];
-	
+
 /*
 var donorSchema = Schema({
 	_id: {type: String, default: shortId.generate},
@@ -110,10 +119,11 @@ function genRandomLastDonation(donor){
 	if(year <= yearDonor || year > yearNow){
 		console.log(yearDonor,year);
 		console.log("Auch!")
-		process.exit();		
+		process.exit();
 	}
 	var randomDayMonth = 1 + Math.floor(Math.random() * 365);
 	var donationDate = (new Date(year, 0)).setDate(randomDayMonth);
 
 	return new Date(donationDate);
 }
+});

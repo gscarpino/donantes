@@ -1,4 +1,4 @@
-var mongoose = require('mongoose'),
+var mongoose = require('../node_modules/tingodb/node_modules/mongoose'),
 	Schema = mongoose.Schema,
 	shortId = require('shortid');
 

@@ -1,8 +1,7 @@
+var models = require('../db/schemas.js');
 
 module.exports = {
-	init: function(app, config){
-		if(config. local)
-		var models = require('../db/schemas.js');
+	init: function(app){
 
 		app.post('/donor', function (req, res, next) {
 

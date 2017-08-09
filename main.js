@@ -21,16 +21,53 @@ if(!args.local){
     process.exit();
 }
 
-donorsController.init(app, config);
-donationsController.init(app, config);
+donorsController.init(app);
+donationsController.init(app);
 
-if(args.local){
-    childProcess.exec('start chrome "http://127.0.0.1:9300/#/"', function (err) {
+var mongoose;
+
+if(args.local == "true"){
+    var tungus = require('tungus');
+    mongoose = require("./node_modules/tingodb/node_modules/mongoose");
+    global.TUNGUS_DB_OPTIONS =  { nativeObjectID: true, searchInArray: true };
+    mongoose.connect('tingodb://db', function (err) {
         if(err){
-            console.log("No se pudo iniciar la aplicacion")
+            console.log("Error conectando:", err);
+            process.exit(1);
         }
-    })
+        else{
+            console.log("Connected to MongoDB(TingoDB)!");
+            var command;
+            if(process.platform == "win32" || process.platform == "win64"){
+                command = 'start chrome "http://127.0.0.1:8080/#/"';
+            }
+            else if(process.platform == "linux"){
+                command = 'sensible-browser "http://127.0.0.1:8080/#/"';
+            }
+            else{
+                console.log("Sistema operativo desconocido", process.platform);
+                process.exit();
+            }
+            childProcess.exec(command, function (err) {
+                if(err){
+                    console.log("No se pudo iniciar la aplicacion: ", err)
+                }
+            })
+        }
+    });
 }
 else{
-    mailerController.init(app);
+    mongoose = require("mongoose");
+    mongoose.connect('mongodb://donantes:gigoju16@127.0.0.1:27017/donantes', {
+      useMongoClient: true
+    }, function(err){
+        if(err){
+            console.log("Error conectando al MongoDB ", err);
+            process.exit(1);
+        }
+        else{
+            console.log("Connected to MongoDB!");
+        }
+        mailerController.init(app);
+    });
 }
