@@ -1,0 +1,15 @@
+{
+    "apps": [
+        {
+            "name": "donantes",
+            "script": "main.js",
+            "max_memory_restart": "300M",
+            "out_file": "/logs/donantes.log",
+            "error_file": "/logs/donantes.error.log",
+            "combine_logs": true,
+            "max_restarts": 15,
+            "restart_delay": 1000,
+            "args": "--local=false"
+        }
+    ]
+}
