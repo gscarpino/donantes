@@ -1,9 +1,9 @@
 var server = require('./server.js').init(),
 	app = require('./server.js').app,
 	childProcess = require('child_process'),
-	mailerController = require('./controllers/mailer.js'),
 	donorsController = require('./controllers/donors.js'),
-	donationsController = require('./controllers/donations.js');
+	donationsController = require('./controllers/donations.js'),
+    mailerController;
 
 
 args = {};
@@ -40,6 +40,10 @@ schemas.init(args.local, function(models){
                 console.log("No se pudo iniciar la aplicacion: ", err)
             }
         })
+        mailerController = require('./controllers/mailer.js');
+    }
+    else{
+        mailerController = require('./controllers/mailerSES.js');
     }
     mailerController.init(app, models);
     donorsController.init(app, models);

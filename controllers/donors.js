@@ -108,16 +108,24 @@ module.exports = {
 		});
 
 		app.get('/donors/search', function(req, res){
-			console.log(req.query.q);
+			console.log(req.query);
 			var q = {};
 			if(!req.query.q){
 				if(req.query.reg){
 					var temp = JSON.parse(req.query.reg);
 					for(var k in temp){
 						if (temp.hasOwnProperty(k)) {
+							switch(k){
+								case "skip":
+								case "limit":
+								case "sort":
+									q[k] = temp[k];
+									continue;
+							}
 							//TODO: hacerlo case insensitive
-							q[k] = new RegExp(temp[k]);
+							q[k] = new RegExp(temp[k], "i");
 						}
+						console.log("qqq",q)
 					}
 				}
 			}
@@ -125,22 +133,26 @@ module.exports = {
 				q = JSON.parse(req.query.q);
 			}
 
-			var limit = q.size ? Number(q.size) : 50;
-			var skip = q.skip ? Number(q.skip) : 0;
 
-			var sort = q.sort;
+			var options = {};
+			options.limit = q.size ? Number(q.size) : (req.query.size ? Number(req.query.size) : 50);
+			options.skip = q.skip ? Number(q.skip) : (req.query.skip ? Number(req.query.skip) : 0);
+
+			var sort = q.sort ? q.sort : (req.query.sort ? req.query.sort : null);
 			var sorting = {};
 
-			if(sort)
-				sorting[sort] = 1;
+			if(sort){
+				options.sort = {};
+				options.sort[sort] = -1;
+			}
 			else
-				sorting["modificatedAt"] = 1;
+				options.sort = {"modificatedAt": -1};
 
 			delete q.skip;
 			delete q.size;
 			delete q.sort;
-			console.log(q)
-			models.donors.find(q, {}, {limit: limit, skip: skip},function(err, docs){
+			console.log("q",q, "options",options)
+			models.donors.find(q, {}, options,function(err, docs){
 				if(err){
 					console.log("Error buscando: ", err);
 					return res.status(500).send(err);

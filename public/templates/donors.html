@@ -1,9 +1,38 @@
 <md-content flex layout-padding">
+	<div layout-gt-sm="row">
+		<md-input-container class="md-block" flex-gt-sm flex="25">
+            <label>Buscar por</label>
+            <md-select ng-model="query.type" ng-change="search()">
+				<md-option value="idValue" selected>
+					Identificación
+				</md-option>
+				<md-option value="name">
+                	Nombre
+				</md-option>
+            </md-select>
+		</md-input-container>
+		<md-input-container class="md-block" flex-gt-sm flex="60">
+			<label>Ingrese lo que desea buscar</label>
+        	<input ng-model="query.value" ng-change="search()">
+		</md-input-container>
+
+		<md-input-container class="md-block" flex-gt-sm flex="15">
+			<md-button class="md-raised" ng-disabled="!donors || donors.length == 0" ng-click="sendMail($event)" ng-mouseenter="showTooltipSave=true" ng-mouseleave="showTooltipSave=false">
+				<md-tooltip md-direction="top" style="font-size:18px;">
+					Enviar mail
+				</md-tooltip>
+				<i class="material-icons">
+					mail_outline
+				</i>
+			</md-button>
+		</md-input-container>
+	</div>
+	<md-divider></md-divider>
 	<div ng-if="donors.length > 0">
 		<div ng-repeat="d in donors" ng-include="'static/templates/donors.result.html'">
-			
+
 		</div>
-		
+
 		<div style="text-align: center">
 			<md-button class="md-raised" ng-disabled="currentPage == 0" ng-click="previousPage()" ng-mouseenter="showTooltipBack=true" ng-mouseleave="showTooltipBack=false">
 				<md-tooltip md-direction="top" style="font-size:18px;">

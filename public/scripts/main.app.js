@@ -5,7 +5,10 @@ angular.module( 'donantesApp', [ 'ngMaterial', 'ui.router', 'dontantesModule', '
 	var initState = {
 		name: 'home',
 		url: '/',
-		templateUrl: 'static/templates/home.html'
+		templateUrl: 'static/templates/home.html',
+		controller: function($scope){
+			console.log("yeah!")
+		}
 	}
 
 	var searchState = {
@@ -152,6 +155,36 @@ angular.module( 'donantesApp', [ 'ngMaterial', 'ui.router', 'dontantesModule', '
 		}
 	}
 
+	var stateUnsuscribe = {
+		name: 'unsuscribe',
+		url: '/unsuscribe/:token',
+		templateUrl: 'static/templates/unsuscribe.html',
+		controller: function($scope, $http, token){
+			$scope.unsuscribe = function(){
+				if(!token){
+					siteFactory.toast("NO se pudo desuscribir el mail, falta información");
+					return;
+				}
+				$http({method: 'POST', url: ('unsuscribe/'), data: token}).then(
+					function(responseOK){
+						siteFactory.toast("Se desuscribió correctamente");
+					},
+					function(responseError){
+						console.log("Response Error: ", responseError);
+						siteFactory.toast("NO se pudo desuscribir el mail");
+					}
+				);
+			}
+		},
+		resolve: {
+			token:  function($stateParams, $http){
+				if($stateParams.token){
+					return $stateParams.token
+				}
+			}
+		}
+	};
+
 	var statsState = {
 		name: 'stats',
 		url: '/estadisticas',
@@ -161,6 +194,7 @@ angular.module( 'donantesApp', [ 'ngMaterial', 'ui.router', 'dontantesModule', '
 	$stateProvider.state(initState);
 	$stateProvider.state(searchState);
 	$stateProvider.state(statsState);
+	$stateProvider.state(stateUnsuscribe);
 
 })
 

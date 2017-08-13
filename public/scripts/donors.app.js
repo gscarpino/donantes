@@ -14,9 +14,112 @@ angular.module( 'dontantesModule', [ 'ngMaterial', 'ui.router' ] )
 					   });
 			}
 		},
-		controller: function($scope, donors){
+		controller: function($scope, donors, $http, $mdDialog){
 			$scope.donors = donors;
 			$scope.optionsOpen = false;
+			$scope.query = {
+				type: "idValue",
+				value: ""
+			};
+			$scope.currentPage = 0;
+
+			$scope.search = function(){
+				if($scope.query.value.length > 2){
+					var q = {}
+					q[$scope.query.type] = $scope.query.value;
+					$scope.searchWithQuery(q);
+				}
+			};
+
+			$scope.nextPage = function(){
+				$scope.currentPage++;
+				if($scope.query.value && $scope.query.value.length > 2){
+					var q = {}
+					q[$scope.query.type] = $scope.query.value;
+					q.skip = $scope.currentPage * 50;
+					$scope.searchWithQuery(q);
+				}
+				else{
+					var q = {
+						skip: $scope.query.skip
+					}
+					$scope.searchWithQuery(q);
+				}
+			};
+
+			$scope.previousPage = function(){
+				$scope.currentPage--;
+				if($scope.query.value && $scope.query.value.length > 2){
+					var q = {}
+					q[$scope.query.type] = $scope.query.value;
+					q.skip = $scope.currentPage * 50;
+					$scope.searchWithQuery(q);
+				}
+				else{
+					var q = {
+						skip: $scope.query.skip
+					}
+					$scope.searchWithQuery(q);
+				}
+			};
+
+			$scope.searchWithQuery = function(query){
+				var query = encodeURI(JSON.stringify(query));
+				var url = 'donors/search?reg=' + query + '&sort=modificatedAt';
+
+				$http({method: 'GET', url: url}).then (function (data) {
+					$scope.donors = data.data;
+				});
+			};
+
+			$scope.sendMail = function(ev){
+				if(!$scope.donors || $scope.donors.length == 0){
+					return;
+				}
+				console.log("$scope.donors",$scope.donors)
+				$mdDialog.show({
+					controller: function($scope, $mdDialog, mails, ids) {
+						console.log("mails",mails);
+						$scope.mail = {};
+						$scope.mail.to = mails;
+						$scope.ids = ids;
+
+						$scope.cancel = function() {
+						  $mdDialog.cancel();
+						};
+
+						$scope.send = function(mail) {
+						  $mdDialog.hide(mail);
+						};
+					},
+					templateUrl: 'static/templates/donor.mail.html',
+					parent: angular.element(document.body),
+					targetEvent: ev,
+					clickOutsideToClose:true,
+					locals: {
+						mails: [].concat.apply([], $scope.donors.map(function(elem){return elem.mails;}).filter(function(elem){return elem.length > 0;})),
+						ids: [].concat.apply([], $scope.donors.map(function(elem){return elem._id;}))
+					},
+					fullscreen: true // Only for -xs, -sm breakpoints.
+				})
+				.then(function(send) {
+					if(send){
+						$http({method: 'POST', url: ('mail/'), data: send}).then(
+							function(responseOK){
+								siteFactory.toast("Se envio el mail");
+							},
+							function(responseError){
+								console.log("Response Error: ", responseError);
+								siteFactory.toast("NO se pudo enviar el mail");
+							}
+						);
+					}
+				}, function() {
+					siteFactory.toast('Mail cancelado');
+				});
+			}
+
+
 		}
 	}
 

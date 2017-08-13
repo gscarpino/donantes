@@ -14,10 +14,10 @@
 
     <md-dialog-content>
 		<div class="md-dialog-content">
-			<div layout-gt-xs="row">
+			<div layout-gt-xs="row" ng-if="mail.to.length > 2">
 				<md-input-container class="md-block" flex-gt-xs>
 					<label>Para</label>
-					<input ng-if="mail.to.length > 0" ng-model="mail.to[0]" disabled>
+					<input ng-if="mail.to.length == 1" ng-model="mail.to[0]" disabled>
 					<input ng-if="mail.to.length == 0" ng-model="tmpMail">
 				</md-input-container>
 			</div>

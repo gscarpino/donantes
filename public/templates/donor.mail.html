@@ -15,13 +15,13 @@
     <md-dialog-content>
 		<div class="md-dialog-content">
 			<div layout-gt-xs="row" style="margin-top: 12px;">
-				<md-input-container class="md-block" flex-gt-xs>
-					<label>
-						Para: 
-						<span ng-if="mail.to.length > 0" ng-repeat="m in mail.to track by $index" style="color: black;">{{m}} <span ng-if="!$last"> <br> </span></span>
-					</label>
-					<input ng-if="mail.to.length == 0" ng-model="tmpMail">
-				</md-input-container>
+				<div layout-gt-xs="row" ng-if="mail.to.length < 2">
+                <md-input-container class="md-block" flex-gt-xs>
+                    <label>Para</label>
+                    <input ng-if="mail.to.length == 1" ng-model="mail.to[0]" disabled>
+                    <input ng-if="mail.to.length == 0" ng-model="tmpMail">
+                </md-input-container>
+            </div>
 			</div>
 			<div layout-gt-xs="row">
 				<md-input-container class="md-block" flex-gt-xs>
