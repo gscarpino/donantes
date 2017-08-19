@@ -1,0 +1,14 @@
+{
+  "name": "hook_manager",
+  "version": "0.0.1",
+  "description": "Hook manager for RabbitMQ",
+  "main": "index.js",
+  "dependencies": {
+    "async": "^2.0.0-rc.4",
+    "bramqp": "^0.4.0"
+  },
+  "author": {
+    "name": "Sebastián Resumil",
+    "email": "sresumil@gmail.com"
+  }
+}
