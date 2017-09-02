@@ -1,6 +1,7 @@
 var server = require('./server.js').init(),
 	app = require('./server.js').app,
 	childProcess = require('child_process'),
+    authController = require('./controllers/auth.js'),
 	donorsController = require('./controllers/donors.js'),
 	donationsController = require('./controllers/donations.js'),
     mailerController;
@@ -45,6 +46,7 @@ schemas.init(args.local, function(models){
     else{
         mailerController = require('./controllers/mailerSES.js');
     }
+    authController.init(app, models);
     mailerController.init(app, models);
     donorsController.init(app, models);
     donationsController.init(app, models);

@@ -28,6 +28,7 @@
     "angular-messages": "1.5.9",
     "moment": "^2.18.1",
     "angular-trix": "^1.0.2",
-    "angular-moment": "^1.0.1"
+    "angular-moment": "^1.0.1",
+    "angular-recaptcha": "^4.1.0"
   }
 }

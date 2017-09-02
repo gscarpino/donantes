@@ -1,5 +1,15 @@
 var shortId = require('shortid');
 
+var usersSchemaOptions = {
+	_id: {type: String, default: shortId.generate},
+	username: {type: String, unique: true, index: true, required: true},
+	password: {type: String, unique: true, index: true, required: true},
+	token: {type: String, unique: true, index: true},
+	lastLogin: Date,
+	lastAction: Date,
+	status: {type: Number, default: 201}
+};
+
 
 var donorSchemaOptions = {
 	_id: {type: String, default: shortId.generate},
@@ -32,17 +42,29 @@ var donationsSchemaOptions = {
 	comments: String
 };
 
+var mailSchemaOptions = {
+	_id: {type: String, default: shortId.generate},
+	subject: {type: String, required: true},
+	body: {type: String, required: true},
+	to: {type: Array, required: true},
+	desireDate: {type: Date, default: new Date(), index: true}
+};
+
 var mongoose,
 	Schema;
 
 var mongooseConnected = function(m, s, c){
+	var usersSchema = s(usersSchemaOptions);
 	var donorSchema = s(donorSchemaOptions);
 	var donationsSchema = s(donationsSchemaOptions);
+	var mailSchema = s(mailSchemaOptions);
 	donorSchema.index({lastDonation: -1});
 	c({
+		users: m.model('users', usersSchema),
 		donors: m.model('donors', donorSchema),
 		donorsTest: m.model('donorsTest', donorSchema),
-		donations: m.model('donations', donationsSchema)
+		donations: m.model('donations', donationsSchema),
+		mails: m.model('mails', mailSchema)
 	})
 }
 

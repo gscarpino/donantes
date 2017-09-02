@@ -3,7 +3,7 @@
 module.exports = {
 	init: function(app, models){
 
-		app.post('/donor', function (req, res, next) {
+		app.post('/donor', function (req, res) {
 
 			if(!req.body.idType || !req.body.idValue || !req.body.name){
 				return res.status(400).send('Incomplete item');
@@ -37,7 +37,7 @@ module.exports = {
 
 		});
 
-		app.put('/donor', function (req, res, next) {
+		app.put('/donor', function (req, res) {
 
 			if(!req.body._id){
 				return res.status(400).send('Incomplete item');
@@ -60,7 +60,7 @@ module.exports = {
 
 		});
 
-		app.delete('/donor/:id', function (req, res, next) {
+		app.delete('/donor/:id', function (req, res) {
 
 			if(!req.params.id){
 				return res.status(400).send('No se puede eliminar donante sin identificar');

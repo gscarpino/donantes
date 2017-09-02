@@ -1,0 +1,24 @@
+<md-content flex layout-padding>
+    <form name="unsuscribeForm">
+        <div layout-gt-xs="row">
+            <md-input-container class="md-block" flex-gt-xs flex="33">
+                <label>Email</label>
+                <input ng-model="mail" type="email" required>
+            </md-input-container>
+
+        </div>
+            <div vc-recaptcha
+            theme="'light'"
+            key="gKey"
+            on-success="setResponse(response)"
+            ></div>
+            <md-button class="md-raised" ng-disabled="!unsuscribeForm.$valid" ng-click="unsuscribe(mail)">
+                <md-tooltip md-direction="top" style="font-size:18px;">
+                        Desuscribirse
+                </md-tooltip>
+                <i class="material-icons">
+                    done
+                </i>
+            </md-button>
+    </form>
+</md-content>

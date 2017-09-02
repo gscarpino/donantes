@@ -8,7 +8,7 @@
       rel="stylesheet"-->
 	</head>
 	<body ng-app="donantesApp">
-		
+
 		<script src="bower_components/angular/angular.js"></script>
 		<script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
 		<script src="bower_components/angular-material/angular-material.js"></script>
@@ -22,7 +22,8 @@
 		<script src="static/scripts/donations.app.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/trix/0.9.2/trix.js"></script>
 		<script src="bower_components/angular-trix/dist/angular-trix.min.js"></script>
-		
+		<script type="text/javascript" src="bower_components/angular-recaptcha/release/angular-recaptcha.min.js"></script>
+
 		<div ng-controller="mainController" ng-cloak class="mainView">
 			<!--md-progress-linear md-mode="indeterminate" ng-show="showProgressBar"></md-progress-linear-->
 			<md-content class="md-padding">
@@ -40,8 +41,8 @@
 				</md-nav-bar>
 				<div class="ext-content" class="contentView">
 					<ui-view></ui-view>
-				</div>	
+				</div>
 			</md-content>
-			
+
 	</body>
 </html>

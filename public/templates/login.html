@@ -1,0 +1,31 @@
+<md-content flex layout-padding>
+    <form name="loginForm">
+        <div layout-gt-xs="row">
+            <md-input-container class="md-block" flex="33">
+                <label>Nombre de Usuario</label>
+                <input ng-model="username" type="text" required>
+            </md-input-container>
+        </div>
+
+        <div layout-gt-xs="row">
+            <md-input-container class="md-block" flex="33">
+                <label>Contraseña</label>
+                <input ng-model="password" type="password" required>
+            </md-input-container>
+        </div>
+
+        <div vc-recaptcha
+        theme="'light'"
+        key="gKey"
+        on-success="setResponse(response)"
+        ></div>
+        <md-button class="md-raised" ng-disabled="!loginForm.$valid" ng-click="login()">
+            <md-tooltip md-direction="top" style="font-size:18px;">
+                    Entrar
+            </md-tooltip>
+            <i class="material-icons">
+                exit_to_app
+            </i>
+        </md-button>
+    </form>
+</md-content>

@@ -1,4 +1,30 @@
-angular.module( 'donantesApp', [ 'ngMaterial', 'ui.router', 'dontantesModule', 'donacionesModule', 'angularMoment', 'angularTrix'] )
+angular.module( 'donantesApp',
+	[
+		'ngMaterial',
+		'ui.router',
+		'dontantesModule',
+		'donacionesModule',
+		'angularMoment',
+		'angularTrix',
+		'vcRecaptcha'
+	]
+)
+
+.config(function ($httpProvider) {
+	$httpProvider.interceptors.push('httpRequestInterceptor');
+})
+
+.service('httpRequestInterceptor', [function() {
+    var service = this;
+
+    service.request = function(config) {
+    	var t = window.localStorage.getItem("token");
+    	if(t){
+        	config.headers.Authorization = "Basic " + t;
+    	}
+        return config;
+    };
+}])
 
 .config(function($stateProvider){
 
@@ -7,7 +33,39 @@ angular.module( 'donantesApp', [ 'ngMaterial', 'ui.router', 'dontantesModule', '
 		url: '/',
 		templateUrl: 'static/templates/home.html',
 		controller: function($scope){
-			console.log("yeah!")
+			console.log("yeah!");
+		}
+	}
+
+	var loginState = {
+		name: 'login',
+		url: '/login',
+		templateUrl: 'static/templates/login.html',
+		controller: function($scope, $http, $state, siteFactory){
+			console.log("Para iniciar sesión!");
+			$scope.username = "";
+			$scope.password = "";
+			$scope.gKey = "6Lf5eS0UAAAAAMnXQmExTkxd0a90mEVTyKvS2lev";
+
+			$scope.setResponse = function(res){
+				$scope.response = res;
+			}
+
+			$scope.login = function(){
+				$http({method: 'POST', url: ('login/'), data: {u: $scope.username, p: $scope.password}})
+					.then(
+						function(response){
+							var t = response.data.t;
+							window.localStorage.setItem("token", t);
+							siteFactory.toast("Inicio de sesión correcto");
+							$state.go('home');
+						},
+						function(errResponse){
+							siteFactory.toast("Error iniciando sesión");
+							$state.go('login');
+						}
+					)
+			}
 		}
 	}
 
@@ -157,15 +215,18 @@ angular.module( 'donantesApp', [ 'ngMaterial', 'ui.router', 'dontantesModule', '
 
 	var stateUnsuscribe = {
 		name: 'unsuscribe',
-		url: '/unsuscribe/:token',
+		url: '/unsuscribe',
 		templateUrl: 'static/templates/unsuscribe.html',
-		controller: function($scope, $http, token){
-			$scope.unsuscribe = function(){
-				if(!token){
+		controller: function($scope, $http, siteFactory){
+			console.log("y??")
+			$scope.mail = "";
+			$scope.gKey = "6Lf5eS0UAAAAAMnXQmExTkxd0a90mEVTyKvS2lev";
+			$scope.unsuscribe = function(mail){
+				if(!mail){
 					siteFactory.toast("NO se pudo desuscribir el mail, falta información");
 					return;
 				}
-				$http({method: 'POST', url: ('unsuscribe/'), data: token}).then(
+				$http({method: 'POST', url: ('unsuscribe/'), data: {email: mail, response: $scope.response}}).then(
 					function(responseOK){
 						siteFactory.toast("Se desuscribió correctamente");
 					},
@@ -175,12 +236,9 @@ angular.module( 'donantesApp', [ 'ngMaterial', 'ui.router', 'dontantesModule', '
 					}
 				);
 			}
-		},
-		resolve: {
-			token:  function($stateParams, $http){
-				if($stateParams.token){
-					return $stateParams.token
-				}
+
+			$scope.setResponse = function(res){
+				$scope.response = res;
 			}
 		}
 	};
@@ -192,13 +250,14 @@ angular.module( 'donantesApp', [ 'ngMaterial', 'ui.router', 'dontantesModule', '
 	}
 
 	$stateProvider.state(initState);
+	$stateProvider.state(loginState);
 	$stateProvider.state(searchState);
 	$stateProvider.state(statsState);
 	$stateProvider.state(stateUnsuscribe);
 
 })
 
-.factory('siteFactory', function($mdToast) {
+.factory('siteFactory', function($mdToast, $http, $state) {
 	return {
 		toast: function(message) {
 			var pinTo = "top right";
@@ -209,11 +268,32 @@ angular.module( 'donantesApp', [ 'ngMaterial', 'ui.router', 'dontantesModule', '
 				.position(pinTo)
 				.hideDelay(3000)
 			);
+		},
+		isAuthenticated: function(){
+			if(window.localStorage && window.localStorage.getItem("token")){
+				$http({method: 'POST', url: ('auth/'), data: {}})
+					.then(
+						function(response){
+							console.log("response", response);
+						},
+						function(errResponse){
+							console.log("errResponse", errResponse);
+							$state.go('login');
+						}
+					)
+			}
+			else{
+				$state.go('login');
+			}
 		}
 	};
 })
 
-.controller("mainController", function($scope, $state, $rootScope){
+.controller("mainController", function($scope, $state, $rootScope, siteFactory){
 
-
+	console.log("y???");
+	siteFactory.isAuthenticated();
+	setInterval(function() {
+		siteFactory.isAuthenticated();
+	}, 30000);
 })
