@@ -62,6 +62,7 @@ angular.module( 'donantesApp',
 						},
 						function(errResponse){
 							siteFactory.toast("Error iniciando sesión");
+							window.localStorage.removeItem("token");
 							$state.go('login');
 						}
 					)
@@ -258,6 +259,9 @@ angular.module( 'donantesApp',
 })
 
 .factory('siteFactory', function($mdToast, $http, $state) {
+	var isLocalAuth = function(){
+		return window.localStorage && window.localStorage.getItem("token");
+	}
 	return {
 		toast: function(message) {
 			var pinTo = "top right";
@@ -270,7 +274,7 @@ angular.module( 'donantesApp',
 			);
 		},
 		isAuthenticated: function(){
-			if(window.localStorage && window.localStorage.getItem("token")){
+			if(isLocalAuth()){
 				$http({method: 'POST', url: ('auth/'), data: {}})
 					.then(
 						function(response){
@@ -278,6 +282,7 @@ angular.module( 'donantesApp',
 						},
 						function(errResponse){
 							console.log("errResponse", errResponse);
+							window.localStorage.removeItem("token");
 							$state.go('login');
 						}
 					)
@@ -285,13 +290,15 @@ angular.module( 'donantesApp',
 			else{
 				$state.go('login');
 			}
+		},
+		isLocalAuthenticated: function(){
+			return isLocalAuth();
 		}
 	};
 })
 
 .controller("mainController", function($scope, $state, $rootScope, siteFactory){
-
-	console.log("y???");
+	$scope.site = siteFactory;
 	siteFactory.isAuthenticated();
 	setInterval(function() {
 		siteFactory.isAuthenticated();

@@ -63,7 +63,7 @@ module.exports = {
             var hash = crypto.createHash('DSA-SHA1');
             hash.update(req.body.p)
             var pass = hash.digest('hex');
-
+            console.log(pass)
             models.users.findOne({username: user, password: pass}, function(errFind, user){
                 if(errFind){
                     console.log("Error con Mongo", errFind);

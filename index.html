@@ -6,6 +6,8 @@
 		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/trix/0.9.2/trix.css">
 		<!--link href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet"-->
+      </script>
+
 	</head>
 	<body ng-app="donantesApp">
 
@@ -32,7 +34,7 @@
 						<h2><span>Sistema donantes voluntarios</span></h2>
 					</div>
 				</md-toolbar>
-				<md-nav-bar md-selected-nav-item="currentNavItem" nav-bar-aria-label="navigation links">
+				<md-nav-bar md-selected-nav-item="currentNavItem" nav-bar-aria-label="navigation links" ng-if="site.isLocalAuthenticated()">
 					<md-nav-item md-nav-sref="home" name="page1"><i class="material-icons md-48">home</i><div>Inicio</div></md-nav-item>
 					<md-nav-item md-nav-sref="donors" name="page2"><i class="material-icons md-48 large">person</i><div>Donantes</div></md-nav-item>
 					<md-nav-item md-nav-sref="donations" name="page3"><i class="material-icons md-48">opacity</i><div>Donaciones</div></md-nav-item>
