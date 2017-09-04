@@ -70,7 +70,7 @@ var mongooseConnected = function(m, s, c){
 
 module.exports = {
 	init: function(local, cb){
-		if(args.local == "true"){
+		if(local == "true"){
 			var tungus = require('tungus');
 			mongoose = require('../node_modules/tingodb/node_modules/mongoose');
 			Schema = mongoose.Schema;
