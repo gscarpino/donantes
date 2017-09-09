@@ -1,6 +1,6 @@
 
 <md-content flex layout-padding>
-	Donantes que no donan desde 
+	Donantes que no donan desde
 	<div layout-gt-xs="row">
 		<md-input-container class="md-block" flex-gt-xs>
 			<label>por</label>
@@ -17,7 +17,7 @@
 			<label>Cantidad</label>
 			<input ng-model="query.lastDonationSearchValue[0]" type="number">
 		</md-input-container>
-		
+
 		<md-input-container class="md-block" flex-gt-xs ng-if="query.lastDonationSearchType=='Periodo'">
 			<md-select ng-model="query.lastDonationSearchValue[1]">
 				<md-option value="days" >
@@ -31,14 +31,14 @@
 				</md-option>
 			</md-select>
 		</md-input-container>
-			
+
 		<md-input-container flex-lg ng-if="query.lastDonationSearchType=='Fecha'">
 			<label>Fecha</label>
 			<md-datepicker ng-model="query.lastDonationSearchValue"></md-datepicker>
 		</md-input-container>
 	</div>
-	
-	
+
+
 	<div layout-gt-xs="row">
 		<md-input-container class="md-block" flex-gt-xs>
 			<label>Grupo sanguineo</label>
@@ -50,14 +50,14 @@
 					{{bloodType}}
 				</md-option>
 			</md-select>
-			
+
 		</md-input-container>
-	
+
 		<md-input-container class="md-block" flex-gt-xs>
 			<label>Lugar de donacion</label>
 			<input ng-model="query.donationPlace">
 		</md-input-container>
-		
+
 		<md-input-container class="md-block" flex-gt-xs>
 			<label>Tipo de utlima donacion</label>
 			<md-select ng-model="query.lastDonationType">
@@ -87,11 +87,11 @@
 
 	<md-content flex layout-padding">
 		<div ng-if="results && results.length > 0">
-			Se encontraron {{results.length}} donantes:		
+			Se encontraron {{results.length}} donantes:
 			<div ng-repeat="d in results" ng-include="'static/templates/donors.result.html'">
-				
+
 			</div>
-			<div style="text-align: center">
+			<div class="navigationButtonLeft">
 				<md-button class="md-raised" ng-disabled="currentPage == 0" ng-click="previousPage()" ng-mouseenter="showTooltipBack=true" ng-mouseleave="showTooltipBack=false">
 					<md-tooltip md-direction="top" style="font-size:18px;">
 						Anteriores
@@ -100,6 +100,8 @@
 						undo
 					</i>
 				</md-button>
+			</div>
+			<div class="navigationButtonRight">
 				<md-button class="md-raised" ng-click="nextPage()" ng-mouseenter="showTooltipNext=true" ng-mouseleave="showTooltipNext=false">
 					<md-tooltip md-direction="top" style="font-size:18px;">
 						Siguientes
@@ -109,7 +111,7 @@
 					</i>
 				</md-button>
 			</div>
-		</div>	
+		</div>
 	</md-content>
-	
+
 </md-content>

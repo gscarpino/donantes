@@ -7,12 +7,16 @@
 					<input ng-model="donor.name">
 				</md-input-container>
 
+				<md-input-container class="md-block" flex-gt-xs>
+					<label>Fecha de Nacimiento</label>
+
 				<input type="date"
 				   ng-model="donor.birthday"
 				   min="1930-01-01"
 				   class="md-input">
+				</md-input-container>
 			</div>
-			
+
 			<div layout-gt-xs="row">
 				<md-input-container class="md-block" flex-gt-xs>
 					<label>Tipo de Identificacion</label>
@@ -22,13 +26,13 @@
 						</md-option>
 					</md-select>
 				</md-input-container>
-				
+
 				<md-input-container class="md-block" flex-gt-xs>
 					<label>Identificacion</label>
 					<input ng-model="donor.idValue">
 				</md-input-container>
-				
-				
+
+
 				<md-input-container class="md-block" flex-gt-xs>
 					<label>Sexo</label>
 					<md-select ng-model="donor.gender">
@@ -37,7 +41,7 @@
 						</md-option>
 					</md-select>
 				</md-input-container>
-					
+
 				<md-input-container class="md-block" flex-gt-xs>
 					<label>Grupo sanguineo</label>
 					<md-select ng-model="donor.bloodType">
@@ -47,8 +51,8 @@
 					</md-select>
 				</md-input-container>
 			</div>
-		
-			
+
+
 			<div layout-gt-xs="row">
 				<md-input-container class="md-block" flex-gt-xs>
 					<label>Telefonos</label>
@@ -56,22 +60,22 @@
 						<input type="text" placeholder="Ingrese un telefono y enter">
 					</md-chips>
 				</md-input-container>
-				
+
 				<md-input-container class="md-block" flex-gt-xs>
 					<label>Mails</label>
 					<md-chips ng-model="donor.mails" md-enable-chip-edit="true">
 						<input type="email" placeholder="Ingrese un mail y enter" ng-pattern="/^.+@.+\..+$/">
-					</md-chips>						
+					</md-chips>
 				</md-input-container>
 			</div>
-			
+
 			<md-input-container class="md-block" flex-gt-lg>
 				<label>Comentarios</label>
 				<textarea ng-model="donor.comments" md-maxlength="300" md-select-on-focus></textarea>
 			</md-input-container>
-			
+
 		</form>
-		<div>
+		<div style="float: left;">
 			<md-button class="md-raised md-primary" ng-click="save()" ng-mouseenter="showTooltipSave=true" ng-mouseleave="showTooltipSave=false">
 				<md-tooltip md-direction="top" style="font-size:18px;">
 					Guardar
@@ -80,7 +84,7 @@
 					save
 				</i>
 			</md-button>
-			
+
 			<md-button class="md-raised md-warn" ng-disabled="!donor._id" ng-click="delete()" ng-mouseenter="showTooltipSave=true" ng-mouseleave="showTooltipSave=false">
 				<md-tooltip md-direction="top" style="font-size:18px;">
 					Borrar
@@ -89,7 +93,7 @@
 					delete
 				</i>
 			</md-button>
-			
+
 			<md-button class="md-raised" ng-disabled="!donor._id" ng-click="sendMail($event)" ng-mouseenter="showTooltipSave=true" ng-mouseleave="showTooltipSave=false">
 				<md-tooltip md-direction="top" style="font-size:18px;">
 					Enviar mail
@@ -98,7 +102,7 @@
 					mail_outline
 				</i>
 			</md-button>
-			
+
 			<md-button class="md-raised" ng-if="donor._id" ng-click="theDonations()">
 				<md-tooltip md-direction="top" style="font-size:18px;">
 					Ver donaciones
@@ -108,7 +112,7 @@
 					opacity
 				</i>
 			</md-button>
-			
+
 			<md-button class="md-raised" ng-if="donor._id" ng-click="addDonation()">
 				<md-tooltip md-direction="top" style="font-size:18px;">
 						Agregar donacion

@@ -5,29 +5,37 @@ module.exports = {
     init: function(app, models){
 
         app.use(function(req, res, next){
-            if(req.headers.authorization){
-                var t = req.headers.authorization.split(" ");
-                if(t[0] != "Basic"){
+            console.log("URL: ",req.url)
+            switch(req.url){
+                case "/":
+                case "/login/":
                     return next();
-                }
-                models.users.findOne({token: t[1]}, function(errFind, user){
-                    if(user){
-                        user.lastAction = new Date();
-                        user.save(function(errSave){
-                            if(errSave){
-                                console.log("Error con Mongo", errSave);
+                default:
+                    if(req.headers.authorization){
+                        var t = req.headers.authorization.split(" ");
+                        if(t[0] != "Basic"){
+                            return res.status(401).send('Unathorized!');
+                        }
+                        models.users.findOne({token: t[1]}, function(errFind, user){
+                            if(user){
+                                user.lastAction = new Date();
+                                user.save(function(errSave){
+                                    if(errSave){
+                                        console.log("Error con Mongo", errSave);
+                                    }
+                                    req.token = t[1];
+                                    return next();
+                                });
                             }
-                            req.token = t[1];
-                            next();
+                            else{
+                                return res.status(401).send('Unathorized!');
+                            }
                         })
                     }
                     else{
-                        next();
+                        return res.status(401).send('Unathorized!');
                     }
-                })
-            }
-            else{
-                next();
+                    break;
             }
         });
 

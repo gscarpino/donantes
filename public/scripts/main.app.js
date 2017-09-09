@@ -299,6 +299,7 @@ angular.module( 'donantesApp',
 
 .controller("mainController", function($scope, $state, $rootScope, siteFactory){
 	$scope.site = siteFactory;
+	console.log("asdasd")
 	siteFactory.isAuthenticated();
 	setInterval(function() {
 		siteFactory.isAuthenticated();

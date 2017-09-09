@@ -32,7 +32,7 @@ models.init(false, function(models){
 
 
     var cant = 0;
-    var fileStream = fs.createReadStream("donantes.csv"),
+    var fileStream = fs.createReadStream("donantes.nuevo.csv"),
     parser = fastCsv({headers: true});
 
     fileStream
@@ -51,14 +51,18 @@ models.init(false, function(models){
             var data;
             while ((data = parser.read()) !== null) {
     			cant++;
-    			if(!data["Doc"] || !data["Nombre y Apellido"]){
-    				//console.log("Revisar", data);
-
+    			if(!data["Doc"]){
+                    console.log("Donante sin Id");
     			}
     			else {
-    				var donante = {
-    					name: data["Nombre y Apellido"].replace("(TE)", "").trim(),
-    				}
+                    console.log(data["Doc"])
+                    var donante = {};
+                    if(!data["Nombre y Apellido"]){
+                        donante.name = "Sin Nombre";
+                    }
+                    else{
+                        donante.name = data["Nombre y Apellido"].replace("(TE)", "").trim();
+                    }
                     var idReg = new RegExp("^[a-zA-Z]+");
                     var testId = idReg.test(data["Doc"]);
                     if(testId){
@@ -84,13 +88,11 @@ models.init(false, function(models){
 
     				var mail = data["e-mail"].replace(/ /g,"");
     				if(mail && mail.indexOf("@") == -1){
-    					//console.log(data["e-mail"]);
     					mail = mail.toLowerCase().replace("hotmail", "@hotmail").replace("yahoo", "@yahoo").replace("gmail", "@gmail").trim();
     				}
 
     				if(mail.indexOf("@") > -1){
     					donante.mail = [mail];
-
     				}
 
                     if(data["F de Nacimiento"]){
@@ -132,6 +134,9 @@ models.init(false, function(models){
                             var donationDay =_date.substring(0, _date.indexOf("/"));
                             var donationMonth = Number(_date.substring(_date.indexOf("/")+1, _date.lastIndexOf("/")))-1;
                             var donationYear = _date.substring(_date.lastIndexOf("/")+1, _date.lastIndexOf("/")+3);
+                            if(donationYear == "20"){
+                                donationYear = _date.substring(_date.lastIndexOf("/")+1, _date.lastIndexOf("/")+5)
+                            }
                             donationYear = (donationYear.indexOf("20") === 0 ? donationYear : "20" + donationYear);
                             var lastDonationDate = new Date(donationYear, donationMonth, donationDay, "03");
                             if(isNaN(lastDonationDate.getTime())){
@@ -141,8 +146,11 @@ models.init(false, function(models){
                             break;
                         }
                     }
+                    if(lastDonationDate && lastDonationDate.getFullYear() < 2000){
+                        console.log(donante.name);
+                        process.exit();
+                    }
                     donante.lastDonation = lastDonationDate;
-
                     var donor = new models.donors(donante);
                     donor.save(function(errSave){
                         if(errSave){
@@ -153,7 +161,7 @@ models.init(false, function(models){
                                 console.log("Duplicado ", donor.toObject().name, donor.toObject().idValue);
                             }
                         }
-                    })
+                    });
     			}
             }
         })

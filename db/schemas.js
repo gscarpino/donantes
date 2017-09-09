@@ -4,7 +4,7 @@ var usersSchemaOptions = {
 	_id: {type: String, default: shortId.generate},
 	username: {type: String, unique: true, index: true, required: true},
 	password: {type: String, unique: true, index: true, required: true},
-	token: {type: String, unique: true, index: true},
+	token: {type: String, index: true},
 	lastLogin: Date,
 	lastAction: Date,
 	status: {type: Number, default: 201}

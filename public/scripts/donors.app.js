@@ -8,7 +8,7 @@ angular.module( 'dontantesModule', [ 'ngMaterial', 'ui.router' ] )
 		templateUrl: 'static/templates/donors.html',
 		resolve: {
 			donors:  function($http){
-				return $http({method: 'GET', url: 'donors/search?size=10&sort=modificatedAt'})
+				return $http({method: 'GET', url: 'donors/search?size=50&sort=modificatedAt'})
 					   .then (function (data) {
 						   return data.data;
 					   });
@@ -31,36 +31,28 @@ angular.module( 'dontantesModule', [ 'ngMaterial', 'ui.router' ] )
 				}
 			};
 
-			$scope.nextPage = function(){
-				$scope.currentPage++;
+			$scope.changePage = function(action){
+				if(action == "next"){
+					$scope.currentPage++;
+				}
+				else if(action == "previous"){
+					$scope.currentPage--;
+				}
+				else{
+					console.error("Invalid action");
+					return;
+				}
 				if($scope.query.value && $scope.query.value.length > 2){
 					var q = {}
 					q[$scope.query.type] = $scope.query.value;
 					q.skip = $scope.currentPage * 50;
-					$scope.searchWithQuery(q);
 				}
 				else{
 					var q = {
-						skip: $scope.query.skip
+						skip: $scope.currentPage * 50
 					}
-					$scope.searchWithQuery(q);
 				}
-			};
-
-			$scope.previousPage = function(){
-				$scope.currentPage--;
-				if($scope.query.value && $scope.query.value.length > 2){
-					var q = {}
-					q[$scope.query.type] = $scope.query.value;
-					q.skip = $scope.currentPage * 50;
-					$scope.searchWithQuery(q);
-				}
-				else{
-					var q = {
-						skip: $scope.query.skip
-					}
-					$scope.searchWithQuery(q);
-				}
+				$scope.searchWithQuery(q);
 			};
 
 			$scope.searchWithQuery = function(query){

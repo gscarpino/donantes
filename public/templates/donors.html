@@ -33,8 +33,8 @@
 
 		</div>
 
-		<div style="text-align: center">
-			<md-button class="md-raised" ng-disabled="currentPage == 0" ng-click="previousPage()" ng-mouseenter="showTooltipBack=true" ng-mouseleave="showTooltipBack=false">
+		<div class="navigationButtonLeft">
+			<md-button class="md-raised" ng-disabled="currentPage == 0" ng-click="changePage('previous')" ng-mouseenter="showTooltipBack=true" ng-mouseleave="showTooltipBack=false">
 				<md-tooltip md-direction="top" style="font-size:18px;">
 					Anteriores
 				</md-tooltip>
@@ -42,7 +42,9 @@
 					undo
 				</i>
 			</md-button>
-			<md-button class="md-raised" ng-click="nextPage()" ng-mouseenter="showTooltipNext=true" ng-mouseleave="showTooltipNext=false">
+		</div>
+		<div class="navigationButtonRight">
+			<md-button class="md-raised" ng-click="changePage('next')" ng-mouseenter="showTooltipNext=true" ng-mouseleave="showTooltipNext=false">
 				<md-tooltip md-direction="top" style="font-size:18px;">
 					Siguientes
 				</md-tooltip>
