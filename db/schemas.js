@@ -39,7 +39,8 @@ var donationsSchemaOptions = {
 	rejected: {type: Boolean, default: false},
 	modificatedAt:{type: Date, default: (new Date())},
 	createdAt: {type: Date, default: (new Date())},
-	comments: String
+	comments: String,
+	negativeSerology: {type: Boolean, default: true}
 };
 
 var mailSchemaOptions = {

@@ -38,10 +38,10 @@ angular.module( 'donacionesModule', [ 'ngMaterial', 'ui.router' ] )
 			donation:  function($stateParams, $http){
 				if(!$stateParams._id){
 					if($stateParams.theParams && $stateParams.theParams.donor){
-						return {donor: $stateParams.theParams.donor, donationDate: new Date()};
+						return {donor: $stateParams.theParams.donor, donationDate: new Date(), negativeSerology: true};
 					}
 					else{
-						return {donationDate: new Date()};
+						return {donationDate: new Date(), negativeSerology: true};
 					}
 				}
 				else{
@@ -126,6 +126,12 @@ angular.module( 'donacionesModule', [ 'ngMaterial', 'ui.router' ] )
 					}
 				);
 
+			};
+
+			$scope.addDonationToCurrentDonor = function(){
+				console.log("$scope.donation.donor",$scope.donation.donor);
+
+				$state.go('donation', {theParams: {donor: $scope.donation.donor}},{ reload: true });
 			};
 		}
 	}

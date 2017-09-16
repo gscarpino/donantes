@@ -131,6 +131,8 @@ angular.module( 'donantesApp',
 					q.donationType = $scope.query.lastDonationType;
 				}
 
+				q.status = 201;
+
 				$scope.parsedQuery = q;
 
 				$scope.searchWithQuery(q);
@@ -299,9 +301,8 @@ angular.module( 'donantesApp',
 
 .controller("mainController", function($scope, $state, $rootScope, siteFactory){
 	$scope.site = siteFactory;
-	console.log("asdasd")
 	siteFactory.isAuthenticated();
 	setInterval(function() {
 		siteFactory.isAuthenticated();
-	}, 30000);
+	}, 60000);
 })

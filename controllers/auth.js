@@ -5,7 +5,6 @@ module.exports = {
     init: function(app, models){
 
         app.use(function(req, res, next){
-            console.log("URL: ",req.url)
             switch(req.url){
                 case "/":
                 case "/login/":
@@ -18,12 +17,15 @@ module.exports = {
                         }
                         models.users.findOne({token: t[1]}, function(errFind, user){
                             if(user){
+                                req.token = t[1];
+                                if(req.url == "/auth/"){
+                                    return next();
+                                }
                                 user.lastAction = new Date();
                                 user.save(function(errSave){
                                     if(errSave){
                                         console.log("Error con Mongo", errSave);
                                     }
-                                    req.token = t[1];
                                     return next();
                                 });
                             }
@@ -51,7 +53,6 @@ module.exports = {
                 if(!user){
                     return res.status(401).send('No se pudo iniciar sesión');
                 }
-
                 if(new Date().getTime() - user.lastAction.getTime() > 1000*60*60*24){
                     console.log("Sesión vencida");
                     return res.status(401).send('Sesión vencida');
@@ -71,7 +72,6 @@ module.exports = {
             var hash = crypto.createHash('DSA-SHA1');
             hash.update(req.body.p)
             var pass = hash.digest('hex');
-            console.log(pass)
             models.users.findOne({username: user, password: pass}, function(errFind, user){
                 if(errFind){
                     console.log("Error con Mongo", errFind);

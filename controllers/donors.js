@@ -3,6 +3,32 @@
 module.exports = {
 	init: function(app, models){
 
+		app.put('/donor/status', function(req, res){
+			console.log("req.body", req.body);
+			if(!req.body.idType || !req.body.idValue || !req.body.action){
+				return res.status(400).send('Incomplete item');
+			}
+			models.donors.findOne({idType: req.body.idType, idValue: req.body.idValue}, function(err, doc){
+				if(err){
+					console.log("Error busqueda en la base de datos");
+					console.log(err);
+					return res.status(500).send('No se pudo buscar ni crear el donante');
+				}
+				if(!doc){
+					return res.status(404).send('No se encuentra al donante');
+				}
+				doc.set("status", req.body.action == 'archive' ? 423 : 201 );
+				doc.save(function(errSave){
+					if(errSave){
+						console.log("Error guardando en la base de datos");
+						console.log(errSave);
+						return res.status(500).send('No se pudo guardar en la base de datos');
+					}
+					return res.jsonp({status: "ok"});
+				});
+			});
+		});
+
 		app.post('/donor', function (req, res) {
 
 			if(!req.body.idType || !req.body.idValue || !req.body.name){
@@ -15,10 +41,10 @@ module.exports = {
 				if(err){
 					console.log("Error busqueda en la base de datos");
 					console.log(err);
-					res.status(500).send('No se pudo buscar ni crear el donante');
+					return res.status(500).send('No se pudo buscar ni crear el donante');
 				}
 				if(doc){
-					res.status(403).send('El donante ya existe');
+					return res.status(403).send('El donante ya existe');
 				}
 				else{
 
@@ -27,7 +53,7 @@ module.exports = {
 						if(errSave){
 							console.log("Error guardado en la base de datos");
 							console.log(err);
-							res.status(500).send('No se pudo guardar el donante');
+							return res.status(500).send('No se pudo guardar el donante');
 						}
 						return res.jsonp(d.toObject());
 					});

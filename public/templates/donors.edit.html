@@ -122,9 +122,27 @@
 					opacity
 				</i>
 			</md-button>
+
+			<md-button class="md-raised" ng-if="donor._id && donor.status == 201" ng-click="donorStatus('archive')">
+				<md-tooltip md-direction="top" style="font-size:18px;">
+						Dar de baja
+				</md-tooltip>
+				<i class="material-icons">thumb_down</i>
+			</md-button>
+
+			<md-button class="md-raised" ng-if="donor._id && donor.status == 423" ng-click="donorStatus('activate')">
+				<md-tooltip md-direction="top" style="font-size:18px;">
+						Dar de alta
+				</md-tooltip>
+				<i class="material-icons">thumb_up</i>
+			</md-button>
+
 		</div>
 		<div style="float: right;" ng-if="donor.lastDonation">
 			Ultima donacion {{donor.lastDonation | date: 'dd/MM/yyyy'}}
+		</div>
+		<div style="float: right;" ng-if="donor.status">
+			Estado {{donor.status | donorStatus}}
 		</div>
 	</div>
 </md-content>

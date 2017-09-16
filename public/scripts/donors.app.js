@@ -230,6 +230,32 @@ angular.module( 'dontantesModule', [ 'ngMaterial', 'ui.router' ] )
 				$state.go('donation', {theParams: {donor: $scope.donor}});
 			};
 
+			$scope.donorStatus = function(action){
+				if(action != 'activate' && action != 'archive'){
+					console.error("Action not accepted")
+					return;
+				}
+				var params = {
+					idType: $scope.donor.idType,
+					idValue: $scope.donor.idValue,
+					action: action
+				}
+				$http({method: 'PUT', url: 'donor/status', data: params}).then(
+					function(responseOK){
+						var message = "Se dio de baja al donante";
+						if(action == 'activate'){
+							message = "Se reactivó el donante";
+						}
+						siteFactory.toast(message);
+						$state.go($state.current, {}, {reload: true});
+					},
+					function(responseError){
+						console.log("Response Error: ", responseError);
+						siteFactory.toast("NO se pudo dar de baja al donante");
+					}
+				);
+			};
+
 			$scope.sendMail = function(ev){
 				if(!$scope.donor._id){
 					return;
@@ -278,4 +304,23 @@ angular.module( 'dontantesModule', [ 'ngMaterial', 'ui.router' ] )
 
 	$stateProvider.state(donorsState);
 	$stateProvider.state(donorState);
+})
+
+.filter('donorStatus', function() { // register new filter
+
+  return function(input) { // filter arguments
+
+    switch(input){
+    	case 201:
+    		return "ACTIVO";
+    		break;
+    	case 423:
+    		return "BAJA";
+    		break;
+    	default:
+    		console.log("Auch!");
+    }
+
+  };
+
 })

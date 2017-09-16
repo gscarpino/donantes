@@ -11,9 +11,10 @@ module.exports = {
 		var logger = function (req, res, next) {
 			res.header("Access-Control-Allow-Origin", "*");
 			res.header("Access-Control-Allow-Headers", "Origin, X-Requested-  With, Content-Type, Accept");
-
-			if(req.method != 'OPTIONS')
-				console.log(moment().format('YYYY-MM-DD HH:mm:ss') + ' ' + req.method + ' ' + req.originalUrl);
+			var requestIp = (req.headers['x-forwarded-for'] || req.connection.remoteAddress).replace('::ffff:', '');
+			if(req.method != 'OPTIONS' && req.url != "/favicon.ico"){
+				console.log(moment().format('YYYY-MM-DD HH:mm:ss') + ' ' + req.method + ' ' + req.originalUrl + ' ' + res.statusCode + ' ' + requestIp);
+			}
 			next();
 		};
 
