@@ -28,13 +28,14 @@
 		</md-input-container>
 	</div>
 	<md-divider></md-divider>
+	Mostrando {{currentPage*50 + donors.length}} de {{donorsCount}}
 	<div ng-if="donors.length > 0">
 		<div ng-repeat="d in donors" ng-include="'static/templates/donors.result.html'">
 
 		</div>
 
 		<div class="navigationButtonLeft">
-			<md-button class="md-raised" ng-disabled="currentPage == 0" ng-click="changePage('previous')" ng-mouseenter="showTooltipBack=true" ng-mouseleave="showTooltipBack=false">
+			<md-button class="md-raised" ng-disabled="processing || currentPage == 0" ng-click="changePage('previous')" ng-mouseenter="showTooltipBack=true" ng-mouseleave="showTooltipBack=false">
 				<md-tooltip md-direction="top" style="font-size:18px;">
 					Anteriores
 				</md-tooltip>
@@ -44,7 +45,7 @@
 			</md-button>
 		</div>
 		<div class="navigationButtonRight">
-			<md-button class="md-raised" ng-click="changePage('next')" ng-mouseenter="showTooltipNext=true" ng-mouseleave="showTooltipNext=false">
+			<md-button class="md-raised" ng-click="changePage('next')" ng-mouseenter="showTooltipNext=true" ng-mouseleave="showTooltipNext=false" ng-disabled="processing || (donorsCount) <= (currentPage*50 + donors.length)">
 				<md-tooltip md-direction="top" style="font-size:18px;">
 					Siguientes
 				</md-tooltip>

@@ -15,7 +15,8 @@ angular.module( 'dontantesModule', [ 'ngMaterial', 'ui.router' ] )
 			}
 		},
 		controller: function($scope, donors, $http, $mdDialog){
-			$scope.donors = donors;
+			$scope.donors = donors.items;
+			$scope.donorsCount = donors.total;
 			$scope.optionsOpen = false;
 			$scope.query = {
 				type: "idValue",
@@ -25,6 +26,8 @@ angular.module( 'dontantesModule', [ 'ngMaterial', 'ui.router' ] )
 
 			$scope.search = function(){
 				if($scope.query.value.length > 2){
+					$scope.processing = true;
+					$scope.currentPage = 0;
 					var q = {}
 					q[$scope.query.type] = $scope.query.value;
 					$scope.searchWithQuery(q);
@@ -42,6 +45,7 @@ angular.module( 'dontantesModule', [ 'ngMaterial', 'ui.router' ] )
 					console.error("Invalid action");
 					return;
 				}
+				$scope.processing = true;
 				if($scope.query.value && $scope.query.value.length > 2){
 					var q = {}
 					q[$scope.query.type] = $scope.query.value;
@@ -60,7 +64,12 @@ angular.module( 'dontantesModule', [ 'ngMaterial', 'ui.router' ] )
 				var url = 'donors/search?reg=' + query + '&sort=modificatedAt';
 
 				$http({method: 'GET', url: url}).then (function (data) {
-					$scope.donors = data.data;
+					$scope.donors = data.data.items;
+					if(data.data.total){
+						$scope.donorsCount = data.data.total;
+					}
+					$scope.processing = false;
+					$scope.$apply();
 				});
 			};
 

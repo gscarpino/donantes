@@ -87,12 +87,12 @@
 
 	<md-content flex layout-padding">
 		<div ng-if="results && results.length > 0">
-			Se encontraron {{results.length}} donantes:
+			Mostrando {{currentPage*50 + results.length}} de {{donorsCount}}
 			<div ng-repeat="d in results" ng-include="'static/templates/donors.result.html'">
 
 			</div>
 			<div class="navigationButtonLeft">
-				<md-button class="md-raised" ng-disabled="currentPage == 0" ng-click="previousPage()" ng-mouseenter="showTooltipBack=true" ng-mouseleave="showTooltipBack=false">
+				<md-button class="md-raised" ng-disabled="currentPage == 0" ng-click="changePage('previous')" ng-mouseenter="showTooltipBack=true" ng-mouseleave="showTooltipBack=false">
 					<md-tooltip md-direction="top" style="font-size:18px;">
 						Anteriores
 					</md-tooltip>
@@ -102,7 +102,7 @@
 				</md-button>
 			</div>
 			<div class="navigationButtonRight">
-				<md-button class="md-raised" ng-click="nextPage()" ng-mouseenter="showTooltipNext=true" ng-mouseleave="showTooltipNext=false">
+				<md-button class="md-raised" ng-click="changePage('next')" ng-mouseenter="showTooltipNext=true" ng-mouseleave="showTooltipNext=false" ng-disabled="(donorsCount) <= (currentPage*50 + results.length)">
 					<md-tooltip md-direction="top" style="font-size:18px;">
 						Siguientes
 					</md-tooltip>
@@ -111,6 +111,9 @@
 					</i>
 				</md-button>
 			</div>
+		</div>
+		<div ng-if="!results || results.length == 0">
+			No se encontraron resultados
 		</div>
 	</md-content>
 

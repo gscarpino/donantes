@@ -174,18 +174,39 @@ module.exports = {
 			else
 				options.sort = {"modificatedAt": -1};
 
+			var getTotal = false;
+			if(!q.skip && !req.query.skip){
+				getTotal = true;
+			}
 			delete q.skip;
 			delete q.size;
 			delete q.sort;
 			console.log("q",q, "options",options)
-			models.donors.find(q, {}, options,function(err, docs){
-				if(err){
-					console.log("Error buscando: ", err);
-					return res.status(500).send(err);
-				}
-				console.log("docs",docs.length);
-				return res.jsonp(docs);
-			})
+
+			var execQuery = function(total){
+				models.donors.find(q, {}, options,function(err, docs){
+					if(err){
+						console.log("Error buscando: ", err);
+						return res.status(500).send(err);
+					}
+					console.log("docs",docs.length);
+					var response = {items: docs};
+					if(total){
+						response.total = total;
+					}
+					return res.jsonp(response);
+				});
+			};
+
+			if(getTotal){
+				models.donors.count(q, function(errCount, count){
+					console.log("errCount", errCount, "count", count);
+					execQuery(count);
+				});
+			}
+			else{
+				execQuery();
+			}
 
 		})
 

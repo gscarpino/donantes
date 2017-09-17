@@ -94,7 +94,7 @@ angular.module( 'donantesApp',
 
 					var _lastDonationValue = $scope.query.lastDonationSearchValue;
 				}
-
+				$scope.processing = true;
 
 				if($scope.query.lastDonationSearchType == "Periodo"){
 					lastDonation = true;
@@ -139,14 +139,19 @@ angular.module( 'donantesApp',
 
 			};
 
-			$scope.nextPage = function(){
-				$scope.currentPage++;
-				$scope.parsedQuery.skip = $scope.currentPage * 50;
-				$scope.searchWithQuery($scope.parsedQuery);
-			};
 
-			$scope.previousPage = function(){
-				$scope.currentPage--;
+			$scope.changePage = function(action){
+				if(action == "next"){
+					$scope.currentPage++;
+				}
+				else if(action == "previous"){
+					$scope.currentPage--;
+				}
+				else{
+					console.error("Invalid action");
+					return;
+				}
+				$scope.processing = true;
 				$scope.parsedQuery.skip = $scope.currentPage * 50;
 				$scope.searchWithQuery($scope.parsedQuery);
 			};
@@ -156,7 +161,12 @@ angular.module( 'donantesApp',
 				var url = 'donors/search?q=' + query + '&sort=modificatedAt';
 
 				$http({method: 'GET', url: url}).then (function (data) {
-					$scope.results = data.data;
+					$scope.results = data.data.items;
+					if(data.data.total){
+						$scope.donorsCount = data.data.total;
+					}
+					$scope.processing = false;
+					$scope.$apply();
 				});
 			};
 
