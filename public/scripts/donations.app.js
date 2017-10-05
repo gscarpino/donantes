@@ -10,20 +10,55 @@ angular.module( 'donacionesModule', [ 'ngMaterial', 'ui.router' ] )
 		templateUrl: 'static/templates/donations.html',
 		resolve: {
 			donations:  function($http, $stateParams){
-				var url = 'donations/search?size=10&sort=modificatedAt';
+				var url = 'donations/search?size=50&sort=donationDate';
 				if($stateParams.q){
-					url = 'donations/search?q=' + $stateParams.q + '&size=10&sort=modificatedAt';
+					url = 'donations/search?q=' + $stateParams.q + '&size=50&sort=donationDate';
 				}
 
 				return $http({method: 'GET', url: url})
-					   .then (function (data) {
-						   return data.data;
-					   });
+					.then (function (data) {
+					   return data.data;
+					});
 			}
 		},
-		controller: function($scope, donations, $state){
-			$scope.donations = donations;
+		controller: function($scope, donations, $state, $http){
+			$scope.donations = donations.items;
+			$scope.donationsCount = donations.total;
 			$scope.optionsOpen = false;
+			$scope.currentPage = 0;
+
+			$scope.searchWithQuery = function(query){
+				var query = encodeURI(JSON.stringify(query));
+				var url = 'donations/search?reg=' + query + '&sort=donationDate';
+
+				$http({method: 'GET', url: url}).then (function (data) {
+					$scope.donations = data.data.items;
+					if(data.data.total){
+						$scope.donationsCount = data.data.total;
+					}
+					$scope.processing = false;
+					$scope.$apply();
+				});
+			};
+
+			$scope.changePage = function(action){
+				if(action == "next"){
+					$scope.currentPage++;
+				}
+				else if(action == "previous"){
+					$scope.currentPage--;
+				}
+				else{
+					console.error("Invalid action");
+					return;
+				}
+				$scope.processing = true;
+
+				$scope.searchWithQuery({skip: $scope.currentPage * 50});
+
+			};
+
+
 		}
 	}
 
@@ -72,7 +107,7 @@ angular.module( 'donacionesModule', [ 'ngMaterial', 'ui.router' ] )
 					};
 					var queryString = encodeURI(JSON.stringify(query));
 
-					$http({method: 'GET', url: 'donors/search?reg=' + queryString + '&size=10&sort=modificatedAt'})
+					$http({method: 'GET', url: 'donors/search?reg=' + queryString + '&size=50&sort=donationDate'})
 					   .then (function (data) {
 						   deferred.resolve( data.data );
 					   });

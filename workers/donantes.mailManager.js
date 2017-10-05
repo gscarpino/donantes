@@ -33,7 +33,7 @@ hooks.subscribe(options, function(object){
             client.sendEmail(
                 {
                     from: '"Donantes voluntarios de sangre" <donantes.voluntarios.sangre@gmail.com>', // sender address
-                    to: mailSets, // list of receivers
+                    bcc: mailSets, // list of receivers
                     subject: message.subject ? message.subject : "Sin asunto", // Subject line
                     altText: message.body ? message.body : ".", // plain text body
                     message: message.body ? (message.body +  footer) : footer// html body

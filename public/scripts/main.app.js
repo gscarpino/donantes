@@ -14,6 +14,17 @@ angular.module( 'donantesApp',
 	$httpProvider.interceptors.push('httpRequestInterceptor');
 })
 
+.config(function($mdDateLocaleProvider) {
+	$mdDateLocaleProvider.months = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+	$mdDateLocaleProvider.shortMonths = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    $mdDateLocaleProvider.days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+    $mdDateLocaleProvider.shortDays = ['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa', 'Do'];
+    $mdDateLocaleProvider.firstDayOfWeek = 1;
+    $mdDateLocaleProvider.formatDate = function(date) {
+       return moment(date).format('DD/MM/YYYY');
+    };
+})
+
 .service('httpRequestInterceptor', [function() {
     var service = this;
 
@@ -316,3 +327,58 @@ angular.module( 'donantesApp',
 		siteFactory.isAuthenticated();
 	}, 60000);
 })
+
+.directive("inputDate", ['$filter',
+	function($filter){
+		return {
+			link: function(scope, angularElement, attrs){
+				scope.inputValue = scope.dateModel;
+
+				scope.$watch('inputValue', function(value, oldValue) {
+
+					value = String(value);
+					var aDate = value.replace(/[^0-9]+/g, '');
+					scope.dateModel = aDate;
+					scope.inputValue = $filter('dfilter')(aDate);
+				});
+
+				scope.blockDelete = function(event){
+					if (event.keyCode === 8 || event.keyCode === 46) {
+				        event.stopPropagation();
+				        event.preventDefault();
+				    }
+				};
+
+				scope.cleanDate = function(){
+					scope.dateModel = "";
+					scope.inputValue = "";
+					setTimeout(function() {
+						scope.$apply();
+					}, 0);
+				}
+			},
+			restrict: 'E',
+			scope: {
+				datePlaceholder: '=placeholder',
+				dateModel: '=model',
+			},
+			template: '<input ng-model="inputValue" ng-keydown="blockDelete($event)" class="md-input" type="text" maxlength="10" title="DD/MM/YYYY"><md-button class="md-raise" ng-click="cleanDate()" style="float: right;margin-top: -41px;min-width: 32px;"><i class="material-icons">close</i></md-button>'
+		};
+	}
+])
+
+.filter('dfilter', function() {
+    return function (number) {
+
+        if (!number) { return ''; }
+        if(number.length > 2){
+        	number = number.slice(0,2) + "/" + number.slice(2);
+        }
+
+        if(number.length > 5){
+        	number = number.slice(0,5) + "/" + number.slice(5);
+        }
+
+        return number;
+    };
+});

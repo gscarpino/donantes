@@ -32,12 +32,12 @@ var donorSchemaOptions = {
 var donationsSchemaOptions = {
 	_id: {type: String, default: shortId.generate},
 	donor: {type: String, ref: 'donors'},
-	donationDate: Date,
+	donationDate: {type: Date, index: true},
 	donationPlace: String,
 	donationType: String,
 	donorType: String,
 	rejected: {type: Boolean, default: false},
-	modificatedAt:{type: Date, default: (new Date())},
+	modificatedAt: {type: Date, default: (new Date())},
 	createdAt: {type: Date, default: (new Date())},
 	comments: String,
 	negativeSerology: {type: Boolean, default: true}

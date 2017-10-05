@@ -144,14 +144,14 @@ angular.module( 'dontantesModule', [ 'ngMaterial', 'ui.router' ] )
 		controller: function($scope, donor, $http, $state, siteFactory, $mdDialog){
 			$scope.idTypes = ['DNI', 'CI', 'Pasaporte'];
 			$scope.bloodTypes = [
+				{name: '0+', slug: '0-plus'},
 				{name: 'A+', slug: 'a-plus'},
+				{name: '0-', slug: '0-minus'},
 				{name: 'A-', slug: 'a-minus'},
 				{name: 'B+', slug: 'b-plus'},
-				{name: 'B-', slug: 'b-minus'},
 				{name: 'AB+', slug: 'ab-plus'},
-				{name: 'AB-', slug: 'ab-minus'},
-				{name: '0+', slug: '0-plus'},
-				{name: '0-', slug: '0-minus'}
+				{name: 'B-', slug: 'b-minus'},
+				{name: 'AB-', slug: 'ab-minus'}
 			];
 
 			$scope.showDate = function(aDate){
@@ -160,9 +160,16 @@ angular.module( 'dontantesModule', [ 'ngMaterial', 'ui.router' ] )
 
 			$scope.genders = ['Femenino', 'Masculino'];
 
+			$scope.formatBirthday = function(aDate){
+				return aDate.getDate().toString() + (aDate.getMonth() + 1).toString() + aDate.getFullYear().toString();
+			};
+
 			if(donor){
-				donor.birthday = new Date(donor.birthday);
+				//donor.birthday = new Date(donor.birthday);
 				$scope.donor = donor;
+				if($scope.donor.birthday){
+					$scope.donor.birthday = $scope.formatBirthday(new Date($scope.donor.birthday));
+				}
 			}
 			else{
 				$scope.donor = {name: '', phones: [], mails: []};
@@ -173,10 +180,22 @@ angular.module( 'dontantesModule', [ 'ngMaterial', 'ui.router' ] )
 					method = "POST";
 				}
 
+				if($scope.donor.birthday){
+					var bDate = $scope.donor.birthday.slice(2,4) + "/" + $scope.donor.birthday.slice(0,2) + "/" + $scope.donor.birthday.slice(4);
+					$scope.donor.birthday = new Date(bDate);
+					if ( isNaN($scope.donor.birthday.getTime() ) ) {
+						siteFactory.toast("Error: fecha de nacimiento inválida");
+						return;
+					}
+				}
+
 				$http({method: method, url: 'donor', data: $scope.donor}).then(
 					function(responseOK){
 						if(responseOK.data._id){
 							$scope.donor._id = responseOK.data._id;
+							if($scope.donor.birthday){
+								$scope.donor.birthday = $scope.formatBirthday($scope.donor.birthday);
+							}
 						}
 						siteFactory.toast("Se guardo la informacion");
 					},

@@ -94,33 +94,82 @@ module.exports = {
 
 		app.get('/donations/search', function(req, res){
 
-			if(!req.query.q)
-				var q = {};
-			else
-				var q = JSON.parse(req.query.q);
+			console.log(req.query);
+			var q = {};
+			if(!req.query.q){
+				if(req.query.reg){
+					var temp = JSON.parse(req.query.reg);
+					for(var k in temp){
+						if (temp.hasOwnProperty(k)) {
+							switch(k){
+								case "skip":
+								case "limit":
+								case "sort":
+									q[k] = temp[k];
+									continue;
+							}
+							//TODO: hacerlo case insensitive
+							q[k] = new RegExp(temp[k], "i");
+						}
+						console.log("qqq",q)
+					}
+				}
+			}
+			else{
+				q = JSON.parse(req.query.q);
+			}
 
-			var limit = req.query.size ? Number(req.query.size) : 50;
-			var skip = req.query.skip ? Number(req.query.skip) : 0;
 
-			var sort = req.query.sort;
+			var options = {};
+			options.limit = q.size ? Number(q.size) : (req.query.size ? Number(req.query.size) : 50);
+			options.skip = q.skip ? Number(q.skip) : (req.query.skip ? Number(req.query.skip) : 0);
+
+			var sort = q.sort ? q.sort : (req.query.sort ? req.query.sort : null);
 			var sorting = {};
 
-			if(sort)
-				sorting[sort] = 1;
+			if(sort){
+				options.sort = {};
+				options.sort[sort] = -1;
+			}
 			else
-				sorting["modificatedAt"] = 1;
+				options.sort = {"modificatedAt": -1};
 
-			models.donations
-				.find(q)
-				.populate('donor')
-				.exec(function(err, docs){
-					if(err){
-						console.log("Error buscando en tingodb");
-						console.log(err);
-						return res.status(500).send('No se encontron las donaciones');
-					}
-					return res.jsonp(docs);
+			var getTotal = false;
+			if(!q.skip && !req.query.skip){
+				getTotal = true;
+			}
+			delete q.skip;
+			delete q.size;
+			delete q.sort;
+			console.log("q",q, "options",options)
+
+			var execQuery = function(total){
+				models.donations
+					.find(q, {}, options)
+					.populate('donor')
+					.exec(function(err, docs){
+						if(err){
+							console.log("Error buscando: ", err);
+							return res.status(500).send(err);
+						}
+						console.log("docs",docs.length);
+						var response = {items: docs};
+						if(total){
+							response.total = total;
+						}
+						return res.jsonp(response);
+					});
+			};
+
+			if(getTotal){
+				models.donations.count(q, function(errCount, count){
+					console.log("errCount", errCount, "count", count);
+					execQuery(count);
 				});
+			}
+			else{
+				execQuery();
+			}
 
 		})
 

@@ -1,10 +1,31 @@
-<md-content flex layout-padding">
+Mostrando {{currentPage*50 + donations.length}} de {{donationsCount}}
 	<div ng-if="donations.length > 0">
 		<div ng-repeat="d in donations" ng-include="'static/templates/donations.result.html'">
-			
+
+		</div>
+
+		<div class="navigationButtonLeft">
+			<md-button class="md-raised" ng-disabled="processing || currentPage == 0" ng-click="changePage('previous')" ng-mouseenter="showTooltipBack=true" ng-mouseleave="showTooltipBack=false">
+				<md-tooltip md-direction="top" style="font-size:18px;">
+					Anteriores
+				</md-tooltip>
+				<i class="material-icons">
+					undo
+				</i>
+			</md-button>
+		</div>
+		<div class="navigationButtonRight">
+			<md-button class="md-raised" ng-click="changePage('next')" ng-mouseenter="showTooltipNext=true" ng-mouseleave="showTooltipNext=false" ng-disabled="processing || (donationsCount) <= (currentPage*50 + donations.length)">
+				<md-tooltip md-direction="top" style="font-size:18px;">
+					Siguientes
+				</md-tooltip>
+				<i class="material-icons">
+					redo
+				</i>
+			</md-button>
 		</div>
 	</div>
-	<div ng-if="donations.length == 0">
+	<div ng-if="!donations || donations.length == 0">
 		No se encontraron donaciones
 	</div>
 </md-content>
