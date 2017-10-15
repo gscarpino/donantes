@@ -17,7 +17,7 @@ var donorSchemaOptions = {
 	idType: String,
 	idValue: {type: String, index: {unique: true}},
 	phones: {type: [String], default: []},
-	mails: {type: [String], default: []},
+	mails: {type: [String], default: [], index: true},
 	createdAt: {type: Date, default: (new Date())},
 	modificatedAt: {type: Date, default: (new Date())},
 	birthday: Date,
@@ -25,6 +25,7 @@ var donorSchemaOptions = {
 	gender: String,
 	bloodType: String,
 	lastDonation: Date,
+	unsuscribeToken: {type: String, index: true},
 	status: {type: Number, default: 201}
 };
 
@@ -54,18 +55,18 @@ var mailSchemaOptions = {
 var mongoose,
 	Schema;
 
-var mongooseConnected = function(m, s, c){
-	var usersSchema = s(usersSchemaOptions);
-	var donorSchema = s(donorSchemaOptions);
-	var donationsSchema = s(donationsSchemaOptions);
-	var mailSchema = s(mailSchemaOptions);
+var mongooseConnected = function(mongooseInstance, mongooseSchema, callback){
+	var usersSchema = mongooseSchema(usersSchemaOptions);
+	var donorSchema = mongooseSchema(donorSchemaOptions);
+	var donationsSchema = mongooseSchema(donationsSchemaOptions);
+	var mailSchema = mongooseSchema(mailSchemaOptions);
 	donorSchema.index({lastDonation: -1});
-	c({
-		users: m.model('users', usersSchema),
-		donors: m.model('donors', donorSchema),
-		donorsTest: m.model('donorsTest', donorSchema),
-		donations: m.model('donations', donationsSchema),
-		mails: m.model('mails', mailSchema)
+	callback({
+		users: mongooseInstance.model('users', usersSchema),
+		donors: mongooseInstance.model('donors', donorSchema),
+		donorsTest: mongooseInstance.model('donorsTest', donorSchema),
+		donations: mongooseInstance.model('donations', donationsSchema),
+		mails: mongooseInstance.model('mails', mailSchema)
 	})
 }
 

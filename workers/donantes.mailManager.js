@@ -15,12 +15,17 @@ var options = {
     rk: "donantes.mail.send"
 }
 
-var footer = "<br><br>Si desea desuscribirse haga click <a href='http://donantes.sytes.net/#/unsuscribe' target='_blank'>aquí</a>";
+var footer = "<br><br>Si desea desuscribirse haga click <a href='http://54.201.247.68:8080/#/unsuscribe' target='_blank'>aquí</a>";
 
 hooks.subscribe(options, function(object){
     var message = object.message;
-
+    if(!message.to){
+        return object.ack.acknowledge(true);
+    }
     var mailSets = [];
+    if(!Array.isArray(message.to)){
+        message.to = [message.to];
+    }
     var mailSetLength = message.to.length / config.amazon.limitToMails;
     while(message.to.length > 0){
         mailSets.push(message.to.splice(0,config.amazon.limitToMails-1));

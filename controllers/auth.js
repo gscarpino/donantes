@@ -4,7 +4,10 @@ var jwt = require('jsonwebtoken'),
 module.exports = {
     init: function(app, models){
 
+        var exceptions = ["/","/unsuscribe/","/unsuscribed/"];
+
         app.use(function(req, res, next){
+            //TODO: cambiar a regular expresion por los parametros:
             switch(req.url){
                 case "/":
                 case "/login/":
@@ -85,6 +88,7 @@ module.exports = {
                 var token = jwt.sign({user: req.body.u, pass: req.body.password, ts: ts}, ts.toString());
 
                 user.lastLogin = new Date();
+                user.lastAction = new Date();
                 user.token = token;
                 user.save(function(errSave){
                     if(errSave){

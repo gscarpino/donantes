@@ -7,16 +7,17 @@
 					<input ng-model="donor.name">
 				</md-input-container>
 
-				<md-input-container class="md-block" flex-gt-xs>
+				<!--md-input-container class="md-block" flex-gt-xs>
 					<label>Fecha de Nacimiento (DDMMYYYY)</label>
 				<input-date model="donor.birthday">
-				</input-date>
-
-				<!--input type="date"
+				</input-date-->
+				<md-input-container class="md-block" flex-gt-xs>
+					<label>Fecha de Nacimiento</label>
+					<input type="date"
 				   ng-model="donor.birthday"
 				   min="1930-01-01"
 				   class="md-input">
-				</md-input-container-->
+				</md-input-container>
 			</div>
 
 			<div layout-gt-xs="row">
@@ -96,7 +97,7 @@
 				</i>
 			</md-button>
 
-			<md-button class="md-raised" ng-disabled="!donor._id" ng-click="sendMail($event)" ng-mouseenter="showTooltipSave=true" ng-mouseleave="showTooltipSave=false">
+			<md-button class="md-raised" ng-disabled="!donor._id || donor.mails.length == 0" ng-click="sendMail($event)" ng-mouseenter="showTooltipSave=true" ng-mouseleave="showTooltipSave=false">
 				<md-tooltip md-direction="top" style="font-size:18px;">
 					Enviar mail
 				</md-tooltip>

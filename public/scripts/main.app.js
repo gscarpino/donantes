@@ -242,12 +242,11 @@ angular.module( 'donantesApp',
 		url: '/unsuscribe',
 		templateUrl: 'static/templates/unsuscribe.html',
 		controller: function($scope, $http, siteFactory){
-			console.log("y??")
 			$scope.mail = "";
 			$scope.gKey = "6Lf5eS0UAAAAAMnXQmExTkxd0a90mEVTyKvS2lev";
 			$scope.unsuscribe = function(mail){
 				if(!mail){
-					siteFactory.toast("NO se pudo desuscribir el mail, falta información");
+					siteFactory.toast("No se pudo desuscribir el mail, falta información");
 					return;
 				}
 				$http({method: 'POST', url: ('unsuscribe/'), data: {email: mail, response: $scope.response}}).then(
@@ -267,6 +266,27 @@ angular.module( 'donantesApp',
 		}
 	};
 
+	var stateUnsuscribed = {
+		name: 'unsuscribed',
+		url: '/unsuscribed/:t',
+		templateUrl: 'static/templates/unsuscribed.html',
+		resolve: {
+			unsuscribed:  function($stateParams, $http, siteFactory){
+				if(!$stateParams.t){
+					siteFactory.toast("Error desuscribiendo");
+					return false;
+				}
+				return $http({method: 'post', url: 'unsuscribed/' + $stateParams.t})
+					   .then (function (data) {
+						   return data.data;
+					   });
+			}
+		},
+		controller: function($scope, unsuscribed){
+			$scope.status = unsuscribed.status;
+		}
+	};
+
 	var statsState = {
 		name: 'stats',
 		url: '/estadisticas',
@@ -278,6 +298,7 @@ angular.module( 'donantesApp',
 	$stateProvider.state(searchState);
 	$stateProvider.state(statsState);
 	$stateProvider.state(stateUnsuscribe);
+	$stateProvider.state(stateUnsuscribed);
 
 })
 
