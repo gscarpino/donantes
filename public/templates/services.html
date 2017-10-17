@@ -1,0 +1,34 @@
+<md-content flex layout-padding">
+	<div layout-gt-sm="row">
+		<md-input-container class="md-block" flex-gt-sm flex="50">
+			<label>Nombre del nuevo servicio</label>
+			<input ng-model="newService.name">
+		</md-input-container>
+		<!--md-input-container class="md-block" flex-gt-sm flex="20">
+			<label>Descripción</label>
+			<input ng-model="newService.description">
+		</md-input-container-->
+		<!--md-input-container class="md-block" flex-gt-sm flex="20">
+			<label>Lugar</label>
+			<input ng-model="newService.description">
+		</md-input-container-->
+		<md-input-container class="md-block" flex-gt-sm flex="15">
+			<md-button class="md-raised" ng-click="addSerive()">
+	            <md-tooltip md-direction="top" style="font-size:18px;">
+	                Agregar servicio
+	            </md-tooltip>
+	            <i class="material-icons">
+	            	add_circle_outline
+	            </i>
+	        </md-button>
+	    </md-input-container>
+	</div>
+</md-content>
+<md-divider></md-divider>
+<div ng-if="services.length > 0">
+	<div ng-repeat="service in services" ng-include="'static/templates/services.result.html'">
+	</div>
+</div>
+<div ng-if="!services || services.length == 0">
+	No se encontraron servicios
+</div>

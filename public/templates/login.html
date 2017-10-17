@@ -1,31 +1,43 @@
 <md-content flex layout-padding>
     <form name="loginForm">
-        <div layout-gt-xs="row">
-            <md-input-container class="md-block" flex="33">
+        <div layout-gt-xs="row" layout-align="center">
+            <md-input-container class="md-block" flex="40">
                 <label>Nombre de Usuario</label>
                 <input ng-model="username" type="text" required>
             </md-input-container>
         </div>
 
-        <div layout-gt-xs="row">
-            <md-input-container class="md-block" flex="33">
+        <div layout-gt-xs="row" layout-align="center">
+            <md-input-container class="md-block" flex="40">
                 <label>Contraseña</label>
                 <input ng-model="password" type="password" required>
             </md-input-container>
         </div>
 
-        <div vc-recaptcha
-        theme="'light'"
-        key="gKey"
-        on-success="setResponse(response)"
-        ></div>
-        <md-button class="md-raised" ng-disabled="!loginForm.$valid" ng-click="login()">
-            <md-tooltip md-direction="top" style="font-size:18px;">
+        <div layout-gt-xs="row" layout-align="center">
+            <div vc-recaptcha
+            theme="'light'"
+            key="gKey"
+            on-success="setResponse(response)"
+            ></div>
+        </div>
+        <div layout-gt-xs="row" layout-align="center">
+            <md-button class="md-raised" ng-disabled="!loginForm.$valid" ng-click="login()">
+                <md-tooltip md-direction="top" style="font-size:18px;">
                     Entrar
-            </md-tooltip>
-            <i class="material-icons">
-                exit_to_app
-            </i>
-        </md-button>
+                </md-tooltip>
+                <i class="material-icons">
+                    exit_to_app
+                </i>
+            </md-button>
+            <md-button class="md-raised" ng-click="signup()">
+                <md-tooltip md-direction="top" style="font-size:18px;">
+                    Registrarse
+                </md-tooltip>
+                <i class="material-icons">
+                    person_add
+                </i>
+            </md-button>
+        </div>
     </form>
 </md-content>

@@ -197,6 +197,7 @@ angular.module( 'dontantesModule', [ 'ngMaterial', 'ui.router' ] )
 								$scope.donor.birthday = $scope.formatBirthday($scope.donor.birthday);
 							}*/
 						}
+						$state.go($state.current, {_id: responseOK.data._id}, {reload: true});
 						siteFactory.toast("Se guardo la informacion");
 					},
 					function(responseError){

@@ -5,13 +5,14 @@ var usersSchemaOptions = {
 	username: {type: String, unique: true, index: true, required: true},
 	password: {type: String, unique: true, index: true, required: true},
 	token: {type: String, index: true},
+	service: {type: String, ref: 'services'},
 	lastLogin: Date,
 	lastAction: Date,
 	status: {type: Number, default: 201}
 };
 
 
-var donorSchemaOptions = {
+var donorsSchemaOptions = {
 	_id: {type: String, default: shortId.generate},
     name: String,
 	idType: String,
@@ -26,9 +27,9 @@ var donorSchemaOptions = {
 	bloodType: String,
 	lastDonation: Date,
 	unsuscribeToken: {type: String, index: true},
-	status: {type: Number, default: 201}
+	status: {type: Number, default: 201},
+	services: [{type: String, ref: 'services'}]
 };
-
 
 var donationsSchemaOptions = {
 	_id: {type: String, default: shortId.generate},
@@ -44,6 +45,13 @@ var donationsSchemaOptions = {
 	negativeSerology: {type: Boolean, default: true}
 };
 
+var servicesSchemaOptions = {
+	_id: {type: String, default: shortId.generate},
+	name: {type: String, required: true, unique: true, index: true},
+	description: {type: String, default: ""},
+	location: {type: Object, default: {}}
+}
+
 var mailSchemaOptions = {
 	_id: {type: String, default: shortId.generate},
 	subject: {type: String, required: true},
@@ -57,15 +65,17 @@ var mongoose,
 
 var mongooseConnected = function(mongooseInstance, mongooseSchema, callback){
 	var usersSchema = mongooseSchema(usersSchemaOptions);
-	var donorSchema = mongooseSchema(donorSchemaOptions);
+	var donorsSchema = mongooseSchema(donorsSchemaOptions);
 	var donationsSchema = mongooseSchema(donationsSchemaOptions);
+	var servicesSchema = mongooseSchema(servicesSchemaOptions);
 	var mailSchema = mongooseSchema(mailSchemaOptions);
-	donorSchema.index({lastDonation: -1});
+	donorsSchema.index({lastDonation: -1});
 	callback({
 		users: mongooseInstance.model('users', usersSchema),
-		donors: mongooseInstance.model('donors', donorSchema),
-		donorsTest: mongooseInstance.model('donorsTest', donorSchema),
+		donors: mongooseInstance.model('donors', donorsSchema),
+		donorsTest: mongooseInstance.model('donorsTest', donorsSchema),
 		donations: mongooseInstance.model('donations', donationsSchema),
+		services: mongooseInstance.model('services', servicesSchema),
 		mails: mongooseInstance.model('mails', mailSchema)
 	})
 }

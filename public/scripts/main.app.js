@@ -4,6 +4,7 @@ angular.module( 'donantesApp',
 		'ui.router',
 		'dontantesModule',
 		'donacionesModule',
+		'servicesModule',
 		'angularMoment',
 		'angularTrix',
 		'vcRecaptcha'
@@ -66,8 +67,8 @@ angular.module( 'donantesApp',
 				$http({method: 'POST', url: ('login/'), data: {u: $scope.username, p: $scope.password}})
 					.then(
 						function(response){
-							var t = response.data.t;
-							window.localStorage.setItem("token", t);
+							window.localStorage.setItem("token", response.data.t);
+							window.localStorage.setItem("sercice", JSON.stringify(response.data.service));
 							siteFactory.toast("Inicio de sesión correcto");
 							$state.go('home');
 						},
@@ -80,6 +81,25 @@ angular.module( 'donantesApp',
 			}
 		}
 	}
+
+	var logoutState = {
+		name: 'logout',
+		url: '/logout',
+		template: '<h1>Gracias!</h1>',
+		controller: function($scope, $http, $state, siteFactory){
+			$http({method: 'POST', url: ('logout/')})
+			.then(
+				function(response){
+					window.localStorage.setItem("token", "");
+					window.localStorage.setItem("sercice", "");
+					siteFactory.toast("Sesión cerrada correctamente");
+					setTimeout(function() {
+						$state.go('login');
+					}, 5000);
+				}
+			)
+		}
+	};
 
 	var searchState = {
 		name: 'search',
@@ -295,6 +315,7 @@ angular.module( 'donantesApp',
 
 	$stateProvider.state(initState);
 	$stateProvider.state(loginState);
+	$stateProvider.state(logoutState);
 	$stateProvider.state(searchState);
 	$stateProvider.state(statsState);
 	$stateProvider.state(stateUnsuscribe);
@@ -347,6 +368,15 @@ angular.module( 'donantesApp',
 	setInterval(function() {
 		siteFactory.isAuthenticated();
 	}, 60000);
+	$rootScope.$on('$stateChangeStart',
+		function(event, toState, toParams, fromState, fromParams){
+			setTimeout(function() {
+				if(siteFactory.isLocalAuthenticated()){
+		    		siteFactory.isAuthenticated();
+				}
+			}, 0);
+		}
+	);
 })
 
 .directive("inputDate", ['$filter',

@@ -4,15 +4,24 @@ var jwt = require('jsonwebtoken'),
 module.exports = {
     init: function(app, models){
 
-        var exceptions = ["/","/unsuscribe/","/unsuscribed/"];
+        var exceptions = ["\\B\\/unsuscribed\\/.*"];
 
         app.use(function(req, res, next){
             //TODO: cambiar a regular expresion por los parametros:
+
             switch(req.url){
                 case "/":
                 case "/login/":
+                case "/unsuscribe/":
                     return next();
+                    break;
                 default:
+                    var found = false;
+                    exceptions.forEach(function(endPointExpression){
+                        var r = new RegExp(endPointExpression);
+                        found = found || r.test(req.url);
+                    });
+                    if(found) return next();
                     if(req.headers.authorization){
                         var t = req.headers.authorization.split(" ");
                         if(t[0] != "Basic"){
@@ -21,6 +30,7 @@ module.exports = {
                         models.users.findOne({token: t[1]}, function(errFind, user){
                             if(user){
                                 req.token = t[1];
+                                req.user = user;
                                 if(req.url == "/auth/"){
                                     return next();
                                 }
@@ -75,29 +85,55 @@ module.exports = {
             var hash = crypto.createHash('DSA-SHA1');
             hash.update(req.body.p)
             var pass = hash.digest('hex');
-            models.users.findOne({username: user, password: pass}, function(errFind, user){
-                if(errFind){
-                    console.log("Error con Mongo", errFind);
-                    return res.status(500).send('Error con la base de datos');
-                }
-                if(!user){
-                    return res.status(401).send('No se pudo iniciar sesión');
-                }
-
-                var ts = new Date().getTime()
-                var token = jwt.sign({user: req.body.u, pass: req.body.password, ts: ts}, ts.toString());
-
-                user.lastLogin = new Date();
-                user.lastAction = new Date();
-                user.token = token;
-                user.save(function(errSave){
-                    if(errSave){
-                        console.log("Error con Mongo", errSave);
-                        return res.status(500).send('Error guardando en la base de datos');
+            models.users
+                .findOne({username: user, password: pass})
+                .populate('service')
+                .exec(function(errFind, user){
+                    if(errFind){
+                        console.log("Error con Mongo", errFind);
+                        return res.status(500).send('Error con la base de datos');
                     }
-                    return res.jsonp({status: "OK", t: token});
+                    if(!user){
+                        return res.status(401).send('No se pudo iniciar sesión');
+                    }
+
+                    var ts = new Date().getTime()
+                    var token = jwt.sign({user: req.body.u, pass: req.body.password, ts: ts}, ts.toString());
+
+                    user.lastLogin = new Date();
+                    user.lastAction = new Date();
+                    user.token = token;
+                    user.save(function(errSave){
+                        if(errSave){
+                            console.log("Error con Mongo", errSave);
+                            return res.status(500).send('Error guardando en la base de datos');
+                        }
+                        return res.jsonp({status: "OK", t: token, service: user.toObject().service});
+                    });
                 });
-            });
+        });
+
+
+        app.post('/logout', function (req, res) {
+            models.users
+                .findOne({token: req.token})
+                .exec(function(errFind, user){
+                    if(errFind){
+                        console.log("Error con Mongo", errFind);
+                        return res.status(500).send('Error con la base de datos');
+                    }
+                    if(!user){
+                        return res.status(401).send('No se pudo cerrar sesión');
+                    }
+                    user.token = "";
+                    user.save(function(errSave){
+                        if(errSave){
+                            console.log("Error con Mongo", errSave);
+                            return res.status(500).send('Error guardando en la base de datos');
+                        }
+                        return res.jsonp({status: "OK"});
+                    });
+                });
         });
     }
 }

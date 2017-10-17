@@ -1,5 +1,3 @@
-
-
 module.exports = {
 	init: function(app, models){
 
@@ -49,6 +47,9 @@ module.exports = {
 				else{
 
 					var d = new models.donors(item);
+					if(req.user){
+						d.services = [req.user.service];
+					}
 					d.save(function(errSave){
 						if(errSave){
 							console.log("Error guardado en la base de datos");
@@ -119,22 +120,24 @@ module.exports = {
 				return res.status(400).send('No se encontro al donante');
 			}
 
-			models.donors.findOne({_id: req.params.id}, function(err, doc){
-				if(err){
-					console.log("Error borrando en la base de datos");
-					console.log(err);
-					return res.status(500).send('No se encontro al donante');
-				}
+			models.donors
+				.findOne({_id: req.params.id})
+				.populate('services')
+				.exec(function(err, doc){
+					if(err){
+						console.log("Error borrando en la base de datos");
+						console.log(err);
+						return res.status(500).send('No se encontro al donante');
+					}
 
-				if(doc)
-					return res.jsonp(doc.toObject());
-				else
-					return res.status(404).send('No se encontro al donante');
-			});
+					if(doc)
+						return res.jsonp(doc.toObject());
+					else
+						return res.status(404).send('No se encontro al donante');
+				});
 		});
 
 		app.get('/donors/search', function(req, res){
-			console.log(req.query);
 			var q = {};
 			if(!req.query.q){
 				if(req.query.reg){
@@ -159,7 +162,6 @@ module.exports = {
 				q = JSON.parse(req.query.q);
 			}
 
-
 			var options = {};
 			options.limit = q.size ? Number(q.size) : (req.query.size ? Number(req.query.size) : 50);
 			options.skip = q.skip ? Number(q.skip) : (req.query.skip ? Number(req.query.skip) : 0);
@@ -181,35 +183,33 @@ module.exports = {
 			delete q.skip;
 			delete q.size;
 			delete q.sort;
-			console.log("q",q, "options",options)
 
+			q.services = req.user.service;
 			var execQuery = function(total){
-				models.donors.find(q, {}, options,function(err, docs){
-					if(err){
-						console.log("Error buscando: ", err);
-						return res.status(500).send(err);
-					}
-					console.log("docs",docs.length);
-					var response = {items: docs};
-					if(total){
-						response.total = total;
-					}
-					return res.jsonp(response);
-				});
+				models.donors
+					.find(q, {}, options)
+					.populate('services')
+					.exec(function(err, docs){
+						if(err){
+							console.log("Error buscando: ", err);
+							return res.status(500).send(err);
+						}
+						var response = {items: docs};
+						if(total){
+							response.total = total;
+						}
+						return res.jsonp(response);
+					});
 			};
 
 			if(getTotal){
 				models.donors.count(q, function(errCount, count){
-					console.log("errCount", errCount, "count", count);
 					execQuery(count);
 				});
 			}
 			else{
 				execQuery();
 			}
-
-		})
-
-
+		});
 	}
 }
