@@ -60,14 +60,14 @@
 				<md-input-container class="md-block" flex-gt-xs>
 					<label>Telefonos</label>
 					<md-chips ng-model="donor.phones" md-enable-chip-edit="true">
-						<input type="text" placeholder="Ingrese un telefono y enter">
+						<input type="text" placeholder="Ingrese un telefono y enter" ng-blur="addIfNotEntered($event, 'phones')">
 					</md-chips>
 				</md-input-container>
 
 				<md-input-container class="md-block" flex-gt-xs>
 					<label>Mails</label>
 					<md-chips ng-model="donor.mails" md-enable-chip-edit="true">
-						<input type="email" placeholder="Ingrese un mail y enter" ng-pattern="/^.+@.+\..+$/">
+						<input type="email" placeholder="Ingrese un mail y enter" ng-blur="addIfNotEntered($event, 'mails')" ng-pattern="/^.+@.+\..+$/">
 					</md-chips>
 				</md-input-container>
 			</div>

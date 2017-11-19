@@ -35,6 +35,7 @@
   font-feature-settings: 'liga';
 }
 
+
 .md-button{
 	border-bottom-color: #CC0000;
 }
@@ -47,6 +48,14 @@
 
 ._md-nav-button-text i{
     font-size: 48px;
+}
+
+.material-icons-small {
+  font-size: 24px !important;
+}
+
+.material-icons-middle {
+  vertical-align: top;
 }
 
 .md-toolbar-tools{
@@ -175,4 +184,8 @@ md-card md-card-title{
 
 md-input-container {
   margin: 12px 0px 6px 0px;
+}
+
+.ext-content{
+  padding-top: 12px;
 }

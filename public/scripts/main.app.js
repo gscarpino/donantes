@@ -216,11 +216,13 @@ angular.module( 'donantesApp',
 				}
 				console.log("$scope.results",$scope.results)
 				$mdDialog.show({
-					controller: function($scope, $mdDialog, mails) {
-						console.log("mails",mails);
+					controller: function($scope, $mdDialog, query) {
 						$scope.mail = {};
-						$scope.mail.to = mails;
 
+						var q = JSON.parse(JSON.stringify(query));
+						delete q.size;
+						delete q.skip;
+						$scope.mail.query = q;
 						$scope.cancel = function() {
 						  $mdDialog.cancel();
 						};
@@ -234,7 +236,8 @@ angular.module( 'donantesApp',
 					targetEvent: ev,
 					clickOutsideToClose:true,
 					locals: {
-						mails: [].concat.apply([], $scope.results.map(function(elem){return elem.mails;}).filter(function(elem){return elem.length > 0;}))
+						//mails: [].concat.apply([], $scope.results.map(function(elem){return elem.mails;}).filter(function(elem){return elem.length > 0;}))
+						query: $scope.parsedQuery
 					},
 					fullscreen: true // Only for -xs, -sm breakpoints.
 				})
@@ -307,6 +310,35 @@ angular.module( 'donantesApp',
 		}
 	};
 
+	var mailsState = {
+		name: 'mails',
+		url: '/mails',
+		templateUrl: 'static/templates/mails.html',
+		controller: function($scope, siteFactory, $http){
+			$scope.currentNavItem = 'page1';
+			$scope.mail = {
+				subject: "",
+				body: ""
+			};
+
+			$scope.sendMail = function(){
+				$scope.processing = true;
+				console.log("$scope.mail", $scope.mail)
+				$http({method: 'POST', url: ('mail/massive'), data: $scope.mail}).then(
+					function(responseOK){
+						siteFactory.toast("Se envio el mail");
+						$scope.processing = false;
+					},
+					function(responseError){
+						console.log("Response Error: ", responseError);
+						siteFactory.toast("NO se pudo enviar el mail");
+						$scope.processing = true;
+					}
+				);
+			};
+		}
+	};
+
 	var statsState = {
 		name: 'stats',
 		url: '/estadisticas',
@@ -317,6 +349,7 @@ angular.module( 'donantesApp',
 	$stateProvider.state(loginState);
 	$stateProvider.state(logoutState);
 	$stateProvider.state(searchState);
+	$stateProvider.state(mailsState);
 	$stateProvider.state(statsState);
 	$stateProvider.state(stateUnsuscribe);
 	$stateProvider.state(stateUnsuscribed);

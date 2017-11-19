@@ -6,7 +6,7 @@ module.exports = {
 			if(!req.body.idType || !req.body.idValue || !req.body.action){
 				return res.status(400).send('Incomplete item');
 			}
-			models.donors.findOne({idType: req.body.idType, idValue: req.body.idValue}, function(err, doc){
+			models.donors.findOne({idType: req.body.idType, idValue: req.body.idValue, services: req.user.service}, function(err, doc){
 				if(err){
 					console.log("Error busqueda en la base de datos");
 					console.log(err);
@@ -35,7 +35,7 @@ module.exports = {
 
 			var item = JSON.parse(JSON.stringify(req.body));
 
-			models.donors.findOne({idType: item.idType, idValue: item.idValue}, function(err, doc){
+			models.donors.findOne({idType: item.idType, idValue: item.idValue, services: req.user.service}, function(err, doc){
 				if(err){
 					console.log("Error busqueda en la base de datos");
 					console.log(err);
@@ -72,7 +72,7 @@ module.exports = {
 			var item = JSON.parse(JSON.stringify(req.body));
 			item.modificatedAt = new Date();
 
-			models.donors.findOneAndUpdate({_id: item._id},item, function(err, doc){
+			models.donors.findOneAndUpdate({_id: item._id, services: req.user.service},item, function(err, doc){
 				if(err){
 					console.log("Error update en la base de datos");
 					console.log(err);
@@ -93,7 +93,7 @@ module.exports = {
 				return res.status(400).send('No se puede eliminar donante sin identificar');
 			}
 
-			models.donors.remove({_id: req.params.id}, function(err, doc){
+			models.donors.remove({_id: req.params.id, services: req.user.service}, function(err, doc){
 				if(err){
 					console.log("Error borrando en la base de datos");
 					console.log(err);
@@ -121,7 +121,7 @@ module.exports = {
 			}
 
 			models.donors
-				.findOne({_id: req.params.id})
+				.findOne({_id: req.params.id, services: req.user.service})
 				.populate('services')
 				.exec(function(err, doc){
 					if(err){

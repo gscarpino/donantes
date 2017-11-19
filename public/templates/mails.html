@@ -1,0 +1,39 @@
+<md-content class="md-padding">
+    <md-nav-bar
+      md-selected-nav-item="currentNavItem"
+      nav-bar-aria-label="navigation links">
+      <md-nav-item md-nav-click="goto('page1')" name="page1">
+        Envío masivo <i class="material-icons material-icons-small material-icons-middle">group</i>
+      </md-nav-item>
+      <md-nav-item md-nav-click="goto('page2')" name="page2">
+        Plantillas <i class="material-icons material-icons-small material-icons-middle">insert_drive_file</i>
+      </md-nav-item>
+    </md-nav-bar>
+    <div class="ext-content" ng-if="currentNavItem == 'page1'">
+        <form ng-cloak name="formMail">
+            <div layout-gt-xs="row">
+                <md-input-container class="md-block" flex-gt-xs>
+                    <label>Asunto</label>
+                    <input ng-model="mail.subject">
+                </md-input-container>
+            </div>
+            <div layout-gt-xs="row" style="display: block;">
+                <trix-editor angular-trix ng-model="mail.body"></trix-editor>
+                <!--textarea ng-model="" rows="5" md-select-on-focus></textarea-->
+            </div>
+            <div layout-gt-xs="row">
+                <!--md-button ng-click="sendMail()" class="md-raised md-primary" ng-mouseenter="showTooltipSave=true" ng-mouseleave="showTooltipSave=false" ng-disabled="processing">
+                    <md-tooltip md-direction="top" style="font-size:18px;">
+                        Enviar
+                    </md-tooltip>
+                    <i class="material-icons">
+                        send
+                    </i>
+                </md-button-->
+            </div>
+        </form>
+    </div>
+    <div class="ext-content" ng-if="currentNavItem == 'page2'">
+    En desarrollo
+    </div>
+</md-content>

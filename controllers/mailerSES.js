@@ -15,15 +15,117 @@ var list = {
 module.exports = {
     init: function(app, models){
 
+        app.post('/mail/massive', function (req, res) {
+
+            if(!req.body.body){
+                return res.status(400).send('Url malformed');
+            }
+            var query = {
+                services: req.user.service,
+                mails:{
+                    $ne: []
+                },
+                $or: [
+                    {
+                        lastDonation: {
+                            $gt: new Date("2016-01-01 00:00:00")
+                        }
+                    },
+                    {
+                        lastDonation: {
+                            $exists: false
+                        }
+                    }
+                ]
+            };
+
+            //req.body.body +=  "<br><br><img src='http://www.gestalt-terapia.es/wp-content/uploads/2011/08/20110813-075956.jpg'>";
+
+            var mailsToSend = [];
+            models.donors
+                .find(query, {mails: 1, _id: -1})
+                .populate('services')
+                .sort({mails: 1})
+                .exec(function(err, results){
+                    if(err){
+                        console.log("Error buscando en la base de datos");
+                        console.log(err);
+                        return res.status(500).send('No se encontro al donante');
+                    }
+
+                    if(results){
+                        for(var i = 0; i < results.length; i++){
+                            var _mails = results[i].toObject().mails;
+                            _mails.forEach(function(aMail){
+                                mailsToSend.push(aMail.toLowerCase());
+                            });
+                        }
+                        console.log("mailsToSend", mailsToSend.length)
+                        hooks.invoke(list, {to: mailsToSend, body: req.body.body, subject: req.body.subject}, function(){
+                            return res.jsonp({status: "ok"});
+                        })
+                    }
+                    else
+                        return res.status(404).send('No se encontro al donante');
+                });
+
+
+        });
+
         app.post('/mail', function (req, res) {
-            console.log(req.body);
-            if(!req.body.to || req.body.to.length == 0 || !req.body.body){
+            console.log("req.body", req.body);
+            if(!req.body.body){
+                console.log("Error: mail sin body");
                 return res.status(400).send('Url malformed');
             }
 
-            hooks.invoke(list, req.body, function(){
-                return res.jsonp({status: "ok"});
-            })
+            if( !req.body.query && (!req.body.to || req.body.to.length == 0) ){
+                console.log("Error: no query or to");
+                return res.status(400).send('Url malformed');
+            }
+
+            //TODO: sacar el sender desde la info del Servicio
+            req.body.sender = '"Hemoterapia Hospital Gutierrez" <donantes.voluntarios.sangre@gmail.com>';
+            if( req.body.query ){
+                var mailsToSend = [];
+                req.body.query.services = req.user.service;
+                models.donors
+                    .find(req.body.query, {mails: 1, _id: -1})
+                    .populate('services')
+                    .sort({mails: 1})
+                    .exec(function(err, results){
+                        if(err){
+                            console.log("Error buscando en la base de datos");
+                            console.log(err);
+                            return res.status(500).send('No se encontro al donante');
+                        }
+                        if(results){
+                            for(var i = 0; i < results.length; i++){
+                                var _mails = results[i].toObject().mails;
+                                _mails.forEach(function(aMail){
+                                    mailsToSend.push(aMail.toLowerCase());
+                                });
+                            }
+                            if(mailsToSend.length > 0){
+                                req.body.to = mailsToSend;
+                                hooks.invoke(list, req.body, function(){
+                                    return res.jsonp({status: "ok"});
+                                });
+                            }
+                            else{
+                                return res.status(404).send('No se encontraron donantes');
+                            }
+                        }
+                        else{
+                            return res.status(404).send('No se encontraron donantes');
+                        }
+                    });
+            }
+            else{
+                hooks.invoke(list, req.body, function(){
+                    return res.jsonp({status: "ok"});
+                });
+            }
         });
 
         app.post('/unsuscribe', function(req, res){

@@ -20,6 +20,16 @@
             "combine_logs": true,
             "max_restarts": 15,
             "restart_delay": 1000
+        },
+        {
+            "name": "donantes.mailHealth",
+            "script": "workers/donantes.mailHealth.js",
+            "max_memory_restart": "300M",
+            "out_file": "/logs/donantes.mailHealth.log",
+            "error_file": "/logs/donantes.mailHealth.error.log",
+            "combine_logs": true,
+            "max_restarts": 15,
+            "restart_delay": 1000
         }
     ]
 }

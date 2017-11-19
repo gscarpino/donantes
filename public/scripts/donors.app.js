@@ -174,6 +174,17 @@ angular.module( 'dontantesModule', [ 'ngMaterial', 'ui.router' ] )
 			else{
 				$scope.donor = {name: '', phones: [], mails: []};
 			}
+
+			$scope.addIfNotEntered = function(event, attr){
+				if(attr == 'phones' || attr == 'mails'){
+					if(event.srcElement.value && event.srcElement.value.length > 0){
+						$scope.donor[attr].push(event.srcElement.value);
+						event.srcElement.value = "";
+						setTimeout(function() {$scope.$apply()}, 0);
+					}
+				}
+			};
+
 			$scope.save = function(){
 				var method = "PUT";
 				if(!$scope.donor._id){

@@ -49,7 +49,8 @@ var servicesSchemaOptions = {
 	_id: {type: String, default: shortId.generate},
 	name: {type: String, required: true, unique: true, index: true},
 	description: {type: String, default: ""},
-	location: {type: Object, default: {}}
+	location: {type: Object, default: {}},
+	mail: {type: Object, default: {}}
 }
 
 var mailSchemaOptions = {
