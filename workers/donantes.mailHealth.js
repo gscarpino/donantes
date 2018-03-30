@@ -1,6 +1,9 @@
 var AWS = require('aws-sdk'),
     models = require('../db/schemas.js'),
-    async = require('async');
+    async = require('async'),
+    fs = require('fs'),
+    config = JSON.parse(fs.readFileSync('/deploy/environment.json', 'utf8')),
+    hooks = require('hook_manager').init(config);
 
 // Load credentials and set region from JSON file
 AWS.config.loadFromPath('./aws.sqs.config.json');
@@ -13,6 +16,12 @@ var params = {};
 var queueURL = "https://sqs.us-west-2.amazonaws.com/416017054729/ses_donantes_fail";
 
 var sqsInterval = 1000 * 60 * 60; //1 hora
+
+var list = {
+    exchanges: ['SQS'],
+    routingKey: "donantes.mail.fail",
+    event: "send"
+}
 
 var params = {
     AttributeNames: [
@@ -33,6 +42,7 @@ var deleteMessage = function(message, callback){
         ReceiptHandle: message.ReceiptHandle
     };
     sqs.deleteMessage(deleteParams, function(err, data) {
+        console.log("err",err, "data", data)
         callback(err);
     });
 };
@@ -41,12 +51,15 @@ models.init(false, function(models){
     async.forever(
         function(nextIteration){
             sqs.receiveMessage(params, function(err, data) {
-                console.log("data",data)
                 if (err) {
+                    console.log("err", err)
                     nextIteration(err);
                 }
                 else {
                     if(!data.Messages || data.Messages.length < 2){
+                        if(!data.Messages){
+                            console.log("No messages!")
+                        }
                         sqsInterval = 1000 * 60 * 60; //1 hora
                     }
                     else{
@@ -63,43 +76,14 @@ models.init(false, function(models){
                                         async.eachSeries(
                                             notification.bounce.bouncedRecipients,
                                             function(bouncedEmail, nextBouncedEmail){
-                                                console.log("BOUNCE EMAIL: ", bouncedEmail.emailAddress);
-                                                models.donors.find({mails: bouncedEmail.emailAddress}, function(errFind, donors){
-                                                    if(errFind){
-                                                        console.log("Error buscando en mongo: ", errFind);
-                                                        return;
-                                                    }
-                                                    if(!donors || donors.length == 0){
-                                                        console.log("Error, no hubo resultados para: ", bouncedEmail.emailAddress)
-                                                        return nextBouncedEmail();
-                                                    }
-                                                    async.eachSeries(
-                                                        donors,
-                                                        function(donor, nextDonor){
-                                                            donorMails = donor.toObject().mails;
-                                                            donorMails = donorMails.filter(function(anEmail){
-                                                                return anEmail != bouncedEmail.emailAddress;
-                                                            });
-                                                            donor.set("mails", donorMails);
-                                                            donor.save(function(errSave){
-                                                                if(errSave){
-                                                                    console.log("Error guardando en mongo: ", donor.toObject());
-                                                                    return;
-                                                                }
-
-                                                                console.log("BOUNCE EMAIL DELETED: ", bouncedEmail.emailAddress);
-                                                                nextDonor();
-                                                            });
-                                                        },
-                                                        function(errDonor){
-                                                            nextBouncedEmail();
-                                                        }
-                                                    );
+                                                hooks.invoke(list, {bouncedEmail: bouncedEmail}, function(){
+                                                    console.log("Message send for:", bouncedEmail)
+                                                    nextBouncedEmail();
                                                 });
                                             },
                                             function(errBounced){
                                                 deleteMessage(aMessage, function(deleteError){
-                                                    nextMessage(deleteError);
+                                                    nextMessage();
                                                 });
                                             }
                                         );

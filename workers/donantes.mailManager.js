@@ -23,6 +23,7 @@ hooks.subscribe(options, function(object){
         console.log("Bad message");
         return object.ack.acknowledge(true);
     }
+
     var mailSets = [];
     if(!Array.isArray(message.to)){
         message.to = [message.to];
@@ -45,7 +46,7 @@ hooks.subscribe(options, function(object){
                 {
                     from: sender, // sender address
                     bcc: mailSet, // list of receivers
-                    subject: message.subject ? message.subject : "Sin asunto", // Subject line
+                    subject: message.subject ? message.subject : "Donantes Voluntarios de Sangre", // Subject line
                     altText: message.body ? message.body : ".", // plain text body
                     message: message.body ? (message.body +  footer) : footer// html body
                 },
