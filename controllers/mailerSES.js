@@ -2,24 +2,42 @@ var fs = require('fs'),
     crypto = require('crypto'),
     config = JSON.parse(fs.readFileSync('/deploy/environment.json', 'utf8')),
     request = require('request'),
-
-    hooks = require('hook_manager').init(config);
+    hooks = require('hook_manager').init(config),
+    multiparty = require('connect-multiparty'),
+    multipartyMiddleware = multiparty({ uploadDir: './public/imgs/' });
 
 var list = {
     exchanges: ['MAILER'],
     routingKey: "donantes.mail.send",
     event: "send"
-
 }
+
+var imageDiv = "<div style='width: 100%; margin-left: auto; margin-right: auto; text-align: center'>" +
+    "<img src='http://54.201.247.68/static/imgs/{{URL}}' style='max-width:600px;'></div>";
 
 module.exports = {
     init: function(app, models){
 
-        app.post('/mail/massive', function (req, res) {
+        app.post('/mail/massive', multipartyMiddleware, function (req, res) {
 
-            if(!req.body.body){
+            if(!req.body.data){
                 return res.status(400).send('Url malformed');
             }
+
+            var data = JSON.parse(req.body.data);
+
+            var headerDiv = "", footerDiv = "";
+
+            if(req.files.headerImg){
+                headerDiv = imageDiv.replace("{{URL}}", req.files.headerImg.path.substring(req.files.headerImg.path.lastIndexOf("/") + 1));
+            }
+
+            if(req.files.footerImg){
+                footerDiv = imageDiv.replace("{{URL}}", req.files.footerImg.path.substring(req.files.footerImg.path.lastIndexOf("/") + 1));
+            }
+
+            var mailBody = headerDiv + "<br>" + data.body + "<br>" + footerDiv;
+
             var query = {
                 services: req.user.service,
                 mails:{
@@ -39,8 +57,6 @@ module.exports = {
                 ]
             };
 
-            //req.body.body +=  "<br><br><img src='http://www.gestalt-terapia.es/wp-content/uploads/2011/08/20110813-075956.jpg'>";
-
             var mailsToSend = [];
             models.donors
                 .find(query, {mails: 1, _id: -1})
@@ -57,23 +73,20 @@ module.exports = {
                         for(var i = 0; i < results.length; i++){
                             var _mails = results[i].toObject().mails;
                             _mails.forEach(function(aMail){
-                                mailsToSend.push(aMail.toLowerCase());
+                                mailsToSend.push(aMail.toLowerCase().trim().replace("ñ", "n"));
                             });
                         }
-                        console.log("mailsToSend", mailsToSend.length)
-                        hooks.invoke(list, {to: mailsToSend, body: req.body.body, subject: req.body.subject}, function(){
+
+                        hooks.invoke(list, {to: mailsToSend, body: mailBody, subject: data.subject}, function(){
                             return res.jsonp({status: "ok"});
                         })
                     }
                     else
                         return res.status(404).send('No se encontro al donante');
                 });
-
-
         });
 
         app.post('/mail', function (req, res) {
-            console.log("req.body", req.body);
             if(!req.body.body){
                 console.log("Error: mail sin body");
                 return res.status(400).send('Url malformed');

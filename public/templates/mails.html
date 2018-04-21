@@ -17,19 +17,52 @@
                     <input ng-model="mail.subject">
                 </md-input-container>
             </div>
+            <div layout-gt-xs="row" style="margin-bottom: 12px">
+                <md-input-container class="md-block" flex-gt-xs>
+                <div choose-file style="display: -webkit-inline-box;">
+                    <input type="file" file-model="files.headerImg" class="ng-hide" id="fileInput">
+                    <div style="padding-top: 16px;">
+                        Imagen de encabezado:
+                    </div>
+
+                    <md-button id="uploadButton" class="md-raised md-mini">
+                        <md-icon class="material-icons">attach_file</md-icon> {{files.headerImg ? files.headerImg.name : "Seleccionar" }}
+                    </md-button>
+                    <div ng-show="files.headerImg">
+                        <img id="previewImg" style="padding-top: 6px; width: 36px; height: 36px;">
+                    </div>
+                </div>
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-xs>
+                <div choose-file style="display: -webkit-inline-box;">
+                    <input type="file" file-model="files.footerImg" class="ng-hide" id="fileInput">
+                    <div style="padding-top: 16px;">
+                        Imagen de pie:
+                    </div>
+
+                    <md-button id="uploadButton" class="md-raised md-mini">
+                        <md-icon class="material-icons">attach_file</md-icon> {{files.footerImg ? files.footerImg.name : "Seleccionar" }}
+                    </md-button>
+                    <div ng-show="files.footerImg">
+                        <img id="previewImg" style="padding-top: 6px; width: 36px; height: 36px;">
+                    </div>
+                </div>
+                </md-input-container>
+            </div>
             <div layout-gt-xs="row" style="display: block;">
                 <trix-editor angular-trix ng-model="mail.body"></trix-editor>
                 <!--textarea ng-model="" rows="5" md-select-on-focus></textarea-->
             </div>
+
             <div layout-gt-xs="row">
-                <!--md-button ng-click="sendMail()" class="md-raised md-primary" ng-mouseenter="showTooltipSave=true" ng-mouseleave="showTooltipSave=false" ng-disabled="processing">
+                <md-button ng-click="sendMail()" class="md-raised md-primary" ng-mouseenter="showTooltipSave=true" ng-mouseleave="showTooltipSave=false" ng-disabled="processing">
                     <md-tooltip md-direction="top" style="font-size:18px;">
                         Enviar
                     </md-tooltip>
                     <i class="material-icons">
                         send
                     </i>
-                </md-button-->
+                </md-button>
             </div>
         </form>
     </div>

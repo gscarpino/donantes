@@ -185,6 +185,17 @@ angular.module( 'dontantesModule', [ 'ngMaterial', 'ui.router' ] )
 				}
 			};
 
+			$scope.canSave = function(){
+				var pattern = /^[^\s@]+@[^\s@]+\.[^\s@\.,]{2,}$/;
+				for(var i = 0; i < $scope.donor.mails.length; i++){
+					if(!pattern.test($scope.donor.mails[i])){
+						$scope.formErrors = "El mail '" + $scope.donor.mails[i] + "' no es valido";
+						return false;
+					}
+				};
+				return true;
+			};
+
 			$scope.save = function(){
 				var method = "PUT";
 				if(!$scope.donor._id){

@@ -154,7 +154,6 @@ module.exports = {
 							//TODO: hacerlo case insensitive
 							q[k] = new RegExp(temp[k], "i");
 						}
-						console.log("qqq",q)
 					}
 				}
 			}

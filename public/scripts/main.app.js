@@ -314,29 +314,7 @@ angular.module( 'donantesApp',
 		name: 'mails',
 		url: '/mails',
 		templateUrl: 'static/templates/mails.html',
-		controller: function($scope, siteFactory, $http){
-			$scope.currentNavItem = 'page1';
-			$scope.mail = {
-				subject: "",
-				body: ""
-			};
-
-			$scope.sendMail = function(){
-				$scope.processing = true;
-				console.log("$scope.mail", $scope.mail)
-				$http({method: 'POST', url: ('mail/massive'), data: $scope.mail}).then(
-					function(responseOK){
-						siteFactory.toast("Se envio el mail");
-						$scope.processing = false;
-					},
-					function(responseError){
-						console.log("Response Error: ", responseError);
-						siteFactory.toast("NO se pudo enviar el mail");
-						$scope.processing = true;
-					}
-				);
-			};
-		}
+		controller: 'mailController'
 	};
 
 	var statsState = {
@@ -411,6 +389,111 @@ angular.module( 'donantesApp',
 		}
 	);
 })
+
+
+.directive('chooseFile', function() {
+    return {
+		link: function (scope, elem, attrs) {
+
+			var button = elem.find('button');
+			var input = angular.element(elem[0].querySelector('input#fileInput'));
+			var preview = angular.element(elem[0].querySelector('img#previewImg'));
+			var reader = new FileReader();
+
+			button.bind('click', function() {
+				input[0].click();
+				updatePreview();
+			});
+
+			input.bind('change', function(e) {
+				scope.$apply(function() {
+					var files = e.target.files;
+					if (files[0]) {
+						scope.fileName = files[0].name;
+					} else {
+						scope.fileName = null;
+					}
+
+					updatePreview(files[0]);
+				});
+			});
+
+			reader.onload = function (loadEvent) {
+                    scope.$apply(function () {
+                    	preview[0].src = loadEvent.target.result;
+                    });
+                }
+
+			function updatePreview(file){
+				if(!preview || !file) return;
+				reader.readAsDataURL(file);
+			}
+		}
+    };
+})
+
+.controller('mailController', function($scope, siteFactory, $http){
+	$scope.currentNavItem = 'page1';
+
+	$scope.mail = {
+		subject: "",
+		body: ""
+	};
+	$scope.files = {};
+
+
+
+	$scope.sendMail = function(files){
+		$scope.processing = true;
+
+		var uploadUrl = "/upload";
+		var fd = new FormData();
+
+		if($scope.files.headerImg){
+			fd.append('headerImg', $scope.files.headerImg);
+		}
+
+		if($scope.files.footerImg){
+			fd.append('footerImg', $scope.files.footerImg);
+		}
+
+		fd.append('data', JSON.stringify($scope.mail))
+
+		$http.post('mail/massive', fd, {
+			transformRequest: angular.identity,
+			headers: {'Content-Type': undefined}
+		}).then(
+			function(responseOK){
+				siteFactory.toast("Se envio el mail");
+				$scope.processing = false;
+			},
+			function(responseError){
+				console.log("Response Error: ", responseError);
+				siteFactory.toast("NO se pudo enviar el mail");
+				$scope.processing = false;
+			}
+		);
+		/*$http({method: 'POST', url: ('mail/massive'), data: $scope.mail})*/
+	};
+})
+
+.directive('fileModel', ['$parse', function ($parse) {
+    return {
+       restrict: 'A',
+       link: function(scope, element, attrs) {
+          var model = $parse(attrs.fileModel);
+          var modelSetter = model.assign;
+
+          element.bind('change', function(){
+             scope.$apply(function(){
+                modelSetter(scope, element[0].files[0]);
+             });
+          });
+       }
+    };
+ }])
+
+
 
 .directive("inputDate", ['$filter',
 	function($filter){
