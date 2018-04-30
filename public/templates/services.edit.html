@@ -1,0 +1,65 @@
+<md-content flex layout-padding style="height: 456px;">
+    <div>
+        <form name="serviceForm">
+            <div layout-gt-xs="row">
+                <md-input-container class="md-block" flex-gt-xs>
+                    <label>Nombre</label>
+                    <input ng-model="service.name">
+                </md-input-container>
+            </div>
+            <div layout-gt-xs="row">
+                <md-input-container class="md-block" flex-gt-xs>
+                    <label>Descripción</label>
+                    <textarea ng-model="service.description" md-maxlength="300" md-select-on-focus></textarea>
+                </md-input-container>
+            </div>
+            <div layout-gt-xs="row">
+                <md-input-container class="md-block" flex-gt-xs>
+                    <label>Mail</label>
+                    <input ng-model="service.mail">
+                </md-input-container>
+            </div>
+
+            <!--div layout-gt-xs="row">
+                <md-input-container class="md-block" flex-gt-xs>
+                    <label>Logo</label>
+                </md-input-container>
+            </div-->
+            <div layout-gt-xs="row">
+                <label style="margin-right: 32px; color: rgba(0,0,0,0.54);">Ubicación</label>
+                <md-input-container class="md-block" flex-gt-xs>
+                    <label>Latitud</label>
+                    <input ng-model="service.location.latitude">
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-xs>
+                    <label>Longitud</label>
+                    <input ng-model="service.location.longitude">
+                </md-input-container>
+            </div>
+
+            <div layout-gt-xs="row" style="text-align: center; margin-right: auto; margin-left: auto">
+                <div id="map-canvas" style="width: 380px; height: 260px;margin: 0 auto 0 auto;"></div>
+            </div>
+        </form>
+        <div style="float: left;">
+            <div ng-show="!canSave()">Error! <strong>{{formErrors}}</strong></div>
+            <md-button class="md-raised md-primary" ng-click="save()" ng-mouseenter="showTooltipSave=true" ng-mouseleave="showTooltipSave=false" ng-disabled="!canSave()">
+                <md-tooltip md-direction="top" style="font-size:18px;">
+                    Guardar
+                </md-tooltip>
+                <i class="material-icons">
+                    save
+                </i>
+            </md-button>
+
+            <md-button class="md-raised md-warn" ng-disabled="!service._id" ng-click="delete()" ng-mouseenter="showTooltipSave=true" ng-mouseleave="showTooltipSave=false">
+                <md-tooltip md-direction="top" style="font-size:18px;">
+                    Borrar
+                </md-tooltip>
+                <i class="material-icons">
+                    delete
+                </i>
+            </md-button>
+        </div>
+    </div>
+</md-content>

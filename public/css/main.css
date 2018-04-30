@@ -47,8 +47,12 @@
 }
 
 ._md-nav-button-text i{
-    font-size: 48px;
+    font-size: 32px;
 }
+._md-nav-button-text div{
+    font-size: 11px;
+}
+
 
 .material-icons-small {
   font-size: 24px !important;

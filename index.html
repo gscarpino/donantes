@@ -1,14 +1,19 @@
 <html>
 	<head>
+		<meta name="google-site-verification" content="IIwBrC9c7X-kBEyPlUy05ggFUQkg9Yml6aTup7H6ymU" />
 		<!--link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic"-->
 		<link rel="stylesheet" href="bower_components/angular-material/angular-material.min.css">
 		<link rel="stylesheet" href="static/css/main.css">
 		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/trix/0.9.2/trix.css">
-		<link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
+		<link rel="shortcut icon" href="static/imgs/favicon.ico" />
 		<!--link href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet"-->
+      <title>Donantes Voluntarios de Sangre</title>
+      <script type="text/javascript">
+      	function initMap(){
+      		console.log("okok")
+      	}
       </script>
-
 	</head>
 	<body ng-app="donantesApp">
 
@@ -33,7 +38,7 @@
 			<md-content class="md-padding">
 				<md-toolbar>
 					<div class="md-toolbar-tools">
-						<h2><span>Sistema donantes voluntarios</span></h2>
+						<h2><span>Donantes Voluntarios de Sangre</span></h2>
 					</div>
 				</md-toolbar>
 				<md-nav-bar md-selected-nav-item="currentNavItem" nav-bar-aria-label="navigation links" ng-if="site.isLocalAuthenticated()">
@@ -44,12 +49,14 @@
 					<md-nav-item md-nav-sref="mails" name="page7"><i class="material-icons">mail_outline</i><div>Mails</div></md-nav-item>
 					<md-nav-item md-nav-sref="services" name="page5"><i class="material-icons">account_balance</i><div>Servicios</div></md-nav-item>
 					<md-nav-item md-nav-sref="stats" name="page6"><i class="material-icons md-48">trending_up</i><div>Estadisticas</div></md-nav-item>
+					<md-nav-item md-nav-sref="settings" name="page8"><i class="material-icons">settings</i><div>Configurar</div></md-nav-item>
 					<md-nav-item md-nav-sref="logout" name="page99"><i class="material-icons">power_settings_new</i><div>Salir</div></md-nav-item>
 				</md-nav-bar>
 				<div class="ext-content" class="contentView">
 					<ui-view></ui-view>
 				</div>
 			</md-content>
-
+			<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhCE3D1OT24gw9Jn3OC24-YPyAA77Jcss&callback=initMap" async defer></script>
+   		</div>
 	</body>
 </html>

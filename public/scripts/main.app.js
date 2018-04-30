@@ -323,6 +323,60 @@ angular.module( 'donantesApp',
 		templateUrl: 'static/templates/stats.html'
 	}
 
+	var settingsState = {
+		name: 'settings',
+		url: '/settings',
+		templateUrl: 'static/templates/config.html',
+		controller: function($scope, $http, siteFactory){
+
+				var reader = new FileReader();
+				var input = angular.element(window.document.querySelector('input#fileInput'));
+
+				input.bind('change', function(e) {
+					$scope.$apply(function() {
+						var files = e.target.files;
+						if (files[0]) {
+							$scope.fileName = files[0].name;
+						} else {
+							$scope.fileName = null;
+						}
+
+						$scope.file =files[0];
+					});
+				});
+
+			$scope.import = function(){
+				$scope.processing = true;
+				reader.onload = function(evt) {
+
+					filecontent = evt.target.result;
+					console.log("filecontent", filecontent)
+					try{
+						var content = JSON.parse(filecontent);
+						$http({method: 'POST', url: '/donors/import', data: content}).then(
+							function(responseOK){
+								siteFactory.toast("Se envio a importar");
+								$scope.processing = false;
+							},
+							function(responseError){
+								console.log("Response Error: ", responseError);
+								siteFactory.toast("NO se pudo enviar a importar");
+								$scope.processing = false;
+							}
+						);
+					}
+					catch(e){
+						//Mensaje de error
+						siteFactory.toast("Error leyendo el archivo");
+						console.log(e, filecontent);
+					}
+				};
+
+				reader.readAsText($scope.file);
+			};
+		}
+	}
+
 	$stateProvider.state(initState);
 	$stateProvider.state(loginState);
 	$stateProvider.state(logoutState);
@@ -331,7 +385,7 @@ angular.module( 'donantesApp',
 	$stateProvider.state(statsState);
 	$stateProvider.state(stateUnsuscribe);
 	$stateProvider.state(stateUnsuscribed);
-
+	$stateProvider.state(settingsState);
 })
 
 .factory('siteFactory', function($mdToast, $http, $state) {
@@ -376,18 +430,28 @@ angular.module( 'donantesApp',
 .controller("mainController", function($scope, $state, $rootScope, siteFactory){
 	$scope.site = siteFactory;
 	siteFactory.isAuthenticated();
+
 	setInterval(function() {
 		siteFactory.isAuthenticated();
-	}, 60000);
+	}, 1000 * 60 * 30);
+
 	$rootScope.$on('$stateChangeStart',
 		function(event, toState, toParams, fromState, fromParams){
 			setTimeout(function() {
 				if(siteFactory.isLocalAuthenticated()){
 		    		siteFactory.isAuthenticated();
+				} else {
+				    $state.go('login');
 				}
 			}, 0);
 		}
 	);
+
+	$rootScope.initialLocation = {
+		latitude: -34.618175,
+		longitude: -58.406526,
+		zoom: 12
+	}
 })
 
 
@@ -419,10 +483,10 @@ angular.module( 'donantesApp',
 			});
 
 			reader.onload = function (loadEvent) {
-                    scope.$apply(function () {
-                    	preview[0].src = loadEvent.target.result;
-                    });
-                }
+                scope.$apply(function () {
+                	preview[0].src = loadEvent.target.result;
+                });
+            }
 
 			function updatePreview(file){
 				if(!preview || !file) return;
@@ -473,7 +537,6 @@ angular.module( 'donantesApp',
 				$scope.processing = false;
 			}
 		);
-		/*$http({method: 'POST', url: ('mail/massive'), data: $scope.mail})*/
 	};
 })
 

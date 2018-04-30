@@ -13,7 +13,7 @@ var list = {
 }
 
 var imageDiv = "<div style='width: 100%; margin-left: auto; margin-right: auto; text-align: center'>" +
-    "<img src='http://54.201.247.68/static/imgs/{{URL}}' style='max-width:600px;'></div>";
+    "<img src='https://donantesvoluntariosdesangre.com.ar/static/imgs/{{URL}}' style='max-width:600px;'></div>";
 
 module.exports = {
     init: function(app, models){
@@ -181,7 +181,7 @@ module.exports = {
                             var message = {
                                 to: req.body.email,
                                 subject: "Desuscripción de Donantes Voluntarios de Sangre",
-                                body: "Haga click <a href='http://54.201.247.68:8080/#/unsuscribed/" + toHash + "' target='_blank'>aquí</a> para confirmar"
+                                body: "Haga click <a href='https://donantesvoluntariosdesangre.com.ar/#/unsuscribed/" + toHash + "' target='_blank'>aquí</a> para confirmar"
                             }
 
 

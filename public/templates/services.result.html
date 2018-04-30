@@ -2,7 +2,7 @@
 	<md-card-title>
 		<md-card-title-text style="display: inline-block">
 			<span class="md-headline">
-				{{service.name}}
+				<a ui-sref="service({_id: service._id})" style="text-decoration:none">{{service.name}}</a>
 			</span>
 			<div style="display:block; float: right">
 

@@ -47,10 +47,13 @@ var donationsSchemaOptions = {
 
 var servicesSchemaOptions = {
 	_id: {type: String, default: shortId.generate},
+	status: {type: Number, default: 201},
 	name: {type: String, required: true, unique: true, index: true},
 	description: {type: String, default: ""},
 	location: {type: Object, default: {}},
-	mail: {type: Object, default: {}}
+	mail: String,
+	modificatedAt: {type: Date, default: (new Date())},
+	createdAt: {type: Date, default: (new Date())}
 }
 
 var mailSchemaOptions = {

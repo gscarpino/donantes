@@ -21,6 +21,10 @@ module.exports = {
 
 		app.use(logger);
 
+		app.get('/ping', function(req, res, next){
+		    res.status(200).end();
+		});
+
 		app.use('/static', express.static('public'));
 
 		app.use('/bower_components',  express.static(__dirname + '/bower_components'));
