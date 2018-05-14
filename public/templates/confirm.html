@@ -1,0 +1,36 @@
+<md-content flex layout-padding>
+    <h3>Solo falta un paso para confirmar! Con tu mail y la contraseña podras actualizar tus datos</h3>
+    <form name="loginForm">
+        <div layout-gt-xs="row" layout-align="center">
+            <md-input-container class="md-block" flex="40">
+                <label>Contraseña</label>
+                <input ng-model="user.password1" type="password" required autocomplete="off">
+            </md-input-container>
+        </div>
+        <div layout-gt-xs="row" layout-align="center">
+            <md-input-container class="md-block" flex="40">
+                <label>Confirmar contraseña</label>
+                <input ng-model="user.password2" type="password" required autocomplete="off">
+            </md-input-container>
+        </div>
+        <div layout-gt-xs="row" layout-align="center">
+                <div vc-recaptcha
+                theme="'light'"
+                key="gKey"
+                on-success="setResponse(response)"
+                ></div>
+            </div>
+    </form>
+    <div>
+        <label style="color: rgba(255,0,0,0.54);font-size: 11px;" ng-if="errors">{{errors}}</label><br>
+        <md-button class="md-raised md-primary" ng-click="confirm()" ng-mouseenter="showTooltipSave=true" ng-mouseleave="showTooltipSave=false" ng-disabled="!canConfirm()">
+            <md-tooltip md-direction="top" style="font-size:18px;">
+                Confirmar
+            </md-tooltip>
+            <i class="material-icons">
+                thumb_up_alt
+            </i>
+        </md-button>
+        <label style="color: rgba(0,0,0,0.54);font-size: 11px;">* Campos obligatorios</label>
+    </div>
+</md-content>

@@ -1,3 +1,20 @@
-<div class="welcomeView">
-	<img src="static/imgs/welcome.jpg" style="width: 40%; margin-top: 12px;"/>
-</div>
+<style type="text/css">
+    .verticalNav{
+        display: block;
+        list-style-type: none;
+    }
+</style>
+
+    <ul class="verticalNav">
+        <li><a ui-sref="home">Información</a></li>
+        <li><a ui-sref="signup">Registrarse</a></li>
+        <li><a ui-sref="login">Ingresar</a></li>
+    </ul>
+
+<md-content flex layout-padding>
+    <div layout="column" layout-align="top center">
+        <div class="welcomeView">
+        	<img src="static/imgs/welcome.jpg" style="width: 40%; margin-top: 12px;"/>
+        </div>
+    </div>
+</md-content>

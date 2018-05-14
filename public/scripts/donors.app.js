@@ -153,12 +153,12 @@ angular.module( 'dontantesModule', [ 'ngMaterial', 'ui.router' ] )
 				{name: 'B-', slug: 'b-minus'},
 				{name: 'AB-', slug: 'ab-minus'}
 			];
+			$scope.genders = ['Femenino', 'Masculino'];
 
 			$scope.showDate = function(aDate){
 				return aDate > new Date('1910-01-01');
 			}
 
-			$scope.genders = ['Femenino', 'Masculino'];
 
 			$scope.formatBirthday = function(aDate){
 				return aDate.getDate().toString() + (aDate.getMonth() + 1).toString() + aDate.getFullYear().toString();

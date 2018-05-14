@@ -1,0 +1,112 @@
+<md-content flex layout-padding style="min-height: 456px;">
+    <div>
+        <form name="serviceForm">
+            <div layout-gt-xs="row">
+                <md-input-container class="md-block" flex-gt-xs>
+                    <label>Nombre y apellido</label>
+                    <input ng-model="user.name" required>
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-xs flex="25">
+                    <label>Tipo de Identificacion</label>
+                    <md-select ng-model="user.idType" required>
+                        <md-option ng-repeat="idType in idTypes" value="{{idType}}">
+                            {{idType}}
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-xs flex="30">
+                    <label>Identificacion</label>
+                    <input type="text" ng-model="user.idValue" required>
+                </md-input-container>
+            </div>
+            <div layout-gt-xs="row">
+                <md-input-container class="md-block" flex-gt-xs flex="16">
+                    <label>Fecha de Nacimiento</label>
+                    <input type="date"
+                   ng-model="user.birthday"
+                   min="1930-01-01"
+                   class="md-input">
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-xs>
+                    <label>Mail</label>
+                    <input ng-model="user.mail" required>
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-xs>
+                    <label>Teléfono</label>
+                    <input ng-model="user.phone">
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-xs flex="15">
+                    <label>Sexo</label>
+                    <md-select ng-model="user.gender">
+                        <md-option ng-repeat="gender in genders" value="{{gender}}">
+                            {{gender}}
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-xs flex="16">
+                    <label>Grupo sanguineo</label>
+                    <md-select ng-model="user.bloodType">
+                        <md-option ng-repeat="bloodType in bloodTypes" value="{{bloodType.slug}}">
+                            {{bloodType.name}}
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+
+            </div>
+
+            <div layout-gt-xs="row">
+                <span ng-if="!services || services.length == 0">Cargando servicios...</span>
+                <md-autocomplete
+                  required
+                  md-no-cache="false"
+                  md-selected-item="user.service"
+                  md-search-text="ctrl.searchText"
+                  md-search-text-change="searchTextChange(ctrl.searchText)"
+                  md-items="_service in querySearch(ctrl.searchText)"
+                  md-item-text="_service.name"
+                  md-min-length="2"
+                  placeholder="Servicio de donación de sangre"
+                  flex="40"
+                  style="top: 100px;">
+                    <md-item-template>
+                      <span md-highlight-text="ctrl.searchText" md-highlight-flags="^i">{{_service.name}}</span>
+                    </md-item-template>
+                    <div ng-messages="loginForm.autocompleteField.$error" ng-if="loginForm.autocompleteField.$touched">
+                        <div ng-message="required">Es <b>obligatorio</b> elegir un servicio</div>
+                        <div ng-message="md-require-match">Por favor, elige un servicio</div>
+                    </div>
+                    <md-not-found>
+                      No se encontraron servicios para "{{ctrl.searchText}}"
+                    </md-not-found>
+                </md-autocomplete>
+                <md-button class="md-raised md-primary" ng-click="searchServiceNearMe()" ng-mouseenter="showTooltipSave=true" ng-mouseleave="showTooltipSave=false" style="height: 32px; top: 96px;">
+                    <md-tooltip md-direction="top" style="font-size:18px;">
+                        Seleccionar más cercano
+                    </md-tooltip>
+                    <i class="material-icons">
+                        explore
+                    </i>
+                </md-button>
+                <div id="signup-map-canvas" style="width: 380px; height: 260px;margin: 0 auto 0 auto;"></div>
+            </div>
+            <div layout-gt-xs="row" layout-align="center">
+                <div vc-recaptcha
+                theme="'light'"
+                key="gKey"
+                on-success="setResponse(response)"
+                ></div>
+            </div>
+        </form>
+        <div style="float: left;display: inline-grid;">
+            <md-button class="md-raised md-primary" ng-click="signup()" ng-mouseenter="showTooltipSave=true" ng-mouseleave="showTooltipSave=false" ng-disabled="!canSave()">
+                <md-tooltip md-direction="top" style="font-size:18px;">
+                    Registrarse
+                </md-tooltip>
+                <i class="material-icons">
+                    person add
+                </i>
+            </md-button>
+            <label style="color: rgba(0,0,0,0.54);font-size: 11px;">* Campos obligatorios</label>
+        </div>
+    </div>
+</md-content>

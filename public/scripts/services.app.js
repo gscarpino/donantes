@@ -10,13 +10,11 @@ angular.module( 'servicesModule', [ 'ngMaterial', 'ui.router' ] )
             services:  function($http, siteFactory){
                 return $http({method: 'get', url: 'services/'})
                        .then (function (data) {
-                            console.log(data)
                            return data.data;
                        });
             }
         },
         controller: function($scope, services, $http, siteFactory, $rootScope){
-            console.log("services",services);
             $scope.services = services;
             if(services && services.length > 0){
                 var myLatlng = new google.maps.LatLng($rootScope.initialLocation.latitude, $rootScope.initialLocation.longitude);
@@ -38,6 +36,23 @@ angular.module( 'servicesModule', [ 'ngMaterial', 'ui.router' ] )
                         marker.setMap(map);
                     }
                 }
+
+                /*
+                function find_closest_marker(event) {
+                    var distances = [];
+                    var closest = -1;
+                    for (i = 0; i < markers.length; i++) {
+                        var d = google.maps.geometry.spherical.computeDistanceBetween(markers[i].position, event.latLng);
+                        distances[i] = d;
+                        if (closest == -1 || d < distances[closest]) {
+                            closest = i;
+                        }
+                    }
+                    console.log('Closest marker is: ' + markers[closest].getTitle());
+
+                }
+
+                 */
 
             }
         }

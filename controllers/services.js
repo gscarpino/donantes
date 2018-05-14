@@ -1,5 +1,25 @@
+var fs = require('fs'),
+    config = JSON.parse(fs.readFileSync('/deploy/environment.json', 'utf8')),
+    hooks = require('hook_manager').init(config);
+
+var listPurge = {
+    exchanges: ['PURGE'],
+    routingKey: "donantes.purge",
+    event: "send"
+}
 module.exports = {
     init: function(app, models){
+
+        app.get('/services/names', function(req, res){
+            models.services.find({status: 201}, {name: 1}, function(errFind, services){
+                if(errFind){
+                    console.log("Error buscando en la base de datos");
+                    console.log(errSave);
+                    return res.status(500).send('No se pudo buscar servicios');
+                }
+                return res.jsonp(services);
+            });
+        });
 
         app.get('/services/:id?', function(req, res){
             if(req.params.id){
@@ -38,7 +58,9 @@ module.exports = {
                     console.log(errSave);
                     return res.status(500).send('No se pudo guardar el servicio');
                 }
-                return res.jsonp(aNewService.toObject());
+                hooks.invoke(listPurge, {url: "/services/names"}, function(){
+                    return res.jsonp(aNewService.toObject());
+                });
             });
         });
 
@@ -58,8 +80,9 @@ module.exports = {
                 else{
                     console.log("Document updated!")
                 }
-
-                return res.jsonp(doc.toObject());
+                hooks.invoke(listPurge, {url: "/services/names"}, function(){
+                    return res.jsonp(doc.toObject());
+                });
             });
         });
 

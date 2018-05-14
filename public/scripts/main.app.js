@@ -43,21 +43,49 @@ angular.module( 'donantesApp',
 	var initState = {
 		name: 'home',
 		url: '/',
+		noauth: true,
 		templateUrl: 'static/templates/home.html',
 		controller: function($scope){
-			console.log("yeah!");
 		}
 	}
 
 	var loginState = {
 		name: 'login',
 		url: '/login',
+		noauth: true,
 		templateUrl: 'static/templates/login.html',
 		controller: function($scope, $http, $state, siteFactory){
-			console.log("Para iniciar sesión!");
+			$http({method: 'get', url: 'services/names'})
+               .then (function (data) {
+                   $scope.services = data.data;
+               },
+               function(errData){
+               	console.log("errServices", errData);
+               	return null;
+               });
 			$scope.username = "";
 			$scope.password = "";
+			if(window.localStorage.getItem("service")){
+				$scope.service = JSON.parse(window.localStorage.getItem("service"));
+			}
+			else{
+				$scope.service = undefined;
+			}
 			$scope.gKey = "6Lf5eS0UAAAAAMnXQmExTkxd0a90mEVTyKvS2lev";
+
+			function createFilterFor(query) {
+
+		      var lowercaseQuery = angular.lowercase(query);
+
+		      return function filterFn(service) {
+		        return (service.name.toLowerCase().indexOf(lowercaseQuery) > -1);
+		      };
+
+		    }
+
+			$scope.querySearch = function(query){
+				return $scope.services.filter(createFilterFor(query));
+			};
 
 			$scope.setResponse = function(res){
 				$scope.response = res;
@@ -68,7 +96,8 @@ angular.module( 'donantesApp',
 					.then(
 						function(response){
 							window.localStorage.setItem("token", response.data.t);
-							window.localStorage.setItem("sercice", JSON.stringify(response.data.service));
+							console.log("$scope.service", $scope.service);
+							window.localStorage.setItem("service", JSON.stringify({name: $scope.service.name, _id: $scope.service._id}));
 							siteFactory.toast("Inicio de sesión correcto");
 							$state.go('home');
 						},
@@ -91,11 +120,10 @@ angular.module( 'donantesApp',
 			.then(
 				function(response){
 					window.localStorage.setItem("token", "");
-					window.localStorage.setItem("sercice", "");
 					siteFactory.toast("Sesión cerrada correctamente");
 					setTimeout(function() {
 						$state.go('login');
-					}, 5000);
+					}, 3000);
 				}
 			)
 		}
@@ -214,7 +242,7 @@ angular.module( 'donantesApp',
 				if(!$scope.results || $scope.results.length == 0){
 					return;
 				}
-				console.log("$scope.results",$scope.results)
+
 				$mdDialog.show({
 					controller: function($scope, $mdDialog, query) {
 						$scope.mail = {};
@@ -263,6 +291,7 @@ angular.module( 'donantesApp',
 	var stateUnsuscribe = {
 		name: 'unsuscribe',
 		url: '/unsuscribe',
+		noauth: true,
 		templateUrl: 'static/templates/unsuscribe.html',
 		controller: function($scope, $http, siteFactory){
 			$scope.mail = "";
@@ -292,6 +321,7 @@ angular.module( 'donantesApp',
 	var stateUnsuscribed = {
 		name: 'unsuscribed',
 		url: '/unsuscribed/:t',
+		noauth: true,
 		templateUrl: 'static/templates/unsuscribed.html',
 		resolve: {
 			unsuscribed:  function($stateParams, $http, siteFactory){
@@ -308,6 +338,14 @@ angular.module( 'donantesApp',
 		controller: function($scope, unsuscribed){
 			$scope.status = unsuscribed.status;
 		}
+	};
+
+	var signupState = {
+		name: 'signup',
+		url: '/signup',
+		noauth: true,
+		templateUrl: 'static/templates/signup.html',
+		controller: 'signupController'
 	};
 
 	var mailsState = {
@@ -377,6 +415,53 @@ angular.module( 'donantesApp',
 		}
 	}
 
+	var confirmState = {
+		name: 'confirm',
+		noauth: true,
+		url: '/confirm/:token',
+		templateUrl: 'static/templates/confirm.html',
+		controller: function($scope, token, $http, siteFactory, $state){
+			console.log("token", token);
+			$scope.user = {};
+			$scope.gKey = "6Lf5eS0UAAAAAMnXQmExTkxd0a90mEVTyKvS2lev";
+			$scope.setResponse = function(res){
+				$scope.response = res;
+			}
+
+			$scope.canConfirm = function() {
+				var setPass = $scope.user.password1 && $scope.user.password1.length > 0 && $scope.user.password2 && $scope.user.password2.length > 0;
+				if(!setPass) {
+					return false;
+				}
+				if($scope.user.password1 != $scope.user.password2){
+					$scope.errors = "Las contraseñas son distintas";
+					return false;
+				}
+				delete $scope.errors;
+				return true;
+			};
+
+			$scope.confirm = function(){
+				console.log("user",$scope.user)
+				$http({method: "POST", url: 'confirm/' + token, data: {user: {password : $scope.user.password1}, response: $scope.response}}).then(
+					function(responseOK){
+						$state.go('home');
+						siteFactory.toast("Registro confirmado");
+					},
+					function(responseError){
+						console.log("Response Error: ", responseError);
+						siteFactory.toast(responseError.data);
+					}
+				);
+			}
+		},
+		resolve: {
+			token:  function($stateParams){
+				return $stateParams.token;
+			}
+		}
+	}
+
 	$stateProvider.state(initState);
 	$stateProvider.state(loginState);
 	$stateProvider.state(logoutState);
@@ -386,6 +471,8 @@ angular.module( 'donantesApp',
 	$stateProvider.state(stateUnsuscribe);
 	$stateProvider.state(stateUnsuscribed);
 	$stateProvider.state(settingsState);
+	$stateProvider.state(signupState);
+	$stateProvider.state(confirmState);
 })
 
 .factory('siteFactory', function($mdToast, $http, $state) {
@@ -429,19 +516,25 @@ angular.module( 'donantesApp',
 
 .controller("mainController", function($scope, $state, $rootScope, siteFactory){
 	$scope.site = siteFactory;
-	siteFactory.isAuthenticated();
-
+	console.log("}}}}}", $state.current.name,"{{{{");
+	if(!$state.current.name){
+		$state.go('home');
+	}
 	setInterval(function() {
-		siteFactory.isAuthenticated();
+		if(!$state.current.noauth){
+			siteFactory.isAuthenticated();
+		}
 	}, 1000 * 60 * 30);
 
 	$rootScope.$on('$stateChangeStart',
 		function(event, toState, toParams, fromState, fromParams){
 			setTimeout(function() {
-				if(siteFactory.isLocalAuthenticated()){
-		    		siteFactory.isAuthenticated();
+				if(!toState.noauth && siteFactory.isLocalAuthenticated()){
+					siteFactory.isAuthenticated();
 				} else {
-				    $state.go('login');
+					if( !toState.noauth ) {
+						$state.go('login');
+					}
 				}
 			}, 0);
 		}
@@ -454,6 +547,151 @@ angular.module( 'donantesApp',
 	}
 })
 
+
+.controller("signupController", function($scope, $state, $rootScope, siteFactory, $http){
+	$scope.idTypes = ['DNI', 'CI', 'Pasaporte'];
+	$scope.bloodTypes = [
+		{name: '0+', slug: '0-plus'},
+		{name: 'A+', slug: 'a-plus'},
+		{name: '0-', slug: '0-minus'},
+		{name: 'A-', slug: 'a-minus'},
+		{name: 'B+', slug: 'b-plus'},
+		{name: 'AB+', slug: 'ab-plus'},
+		{name: 'B-', slug: 'b-minus'},
+		{name: 'AB-', slug: 'ab-minus'}
+	];
+	$scope.genders = ['Femenino', 'Masculino'];
+	$scope.markers = [];
+	$scope.user = {
+		name: "",
+		mail: "",
+		idType: "",
+		idValue: "",
+		birthday: new Date()
+	};
+
+	$scope.gKey = "6Lf5eS0UAAAAAMnXQmExTkxd0a90mEVTyKvS2lev";
+
+	$http({method: 'get', url: 'services/'})
+       .then (function (data) {
+			$scope.services = data.data;
+			if($scope.services && $scope.services.length > 0){
+				var myLatlng = new google.maps.LatLng($rootScope.initialLocation.latitude, $rootScope.initialLocation.longitude);
+				var mapOptions = {
+					zoom: 11,
+					center: myLatlng
+				}
+				var map = new google.maps.Map(document.getElementById("signup-map-canvas"), mapOptions);
+
+				for(var i = 0; i < $scope.services.length; i++){
+					if($scope.services[i].location && $scope.services[i].location.latitude && $scope.services[i].location.longitude){
+						var marker = new google.maps.Marker(
+							{
+								map: map,
+								position: {
+									lat: Number($scope.services[i].location.latitude),
+									lng: Number($scope.services[i].location.longitude)
+								},
+								title: $scope.services[i].name,
+								service: $scope.services[i],
+								draggable: false
+							}
+						);
+						$scope.markers.push(marker);
+						marker.setMap(map);
+					}
+				}
+				console.log($scope.markers)
+			}
+       },
+       function(errData){
+       	console.log("errServices", errData);
+       	return null;
+       });
+
+    function rad(x) {return x*Math.PI/180;}
+    $scope.searchServiceNearMe = function(){
+    	if(navigator.geolocation){
+    		navigator.geolocation.getCurrentPosition(
+    			function(position){
+    				console.log("Position: ", position);
+                    var lat = position.coords.latitude;
+                    var lng = position.coords.longitude;
+                    var R = 6371; // radius of earth in km
+                    var distances = [];
+                    var closest = -1;
+                    for( i=0;i<$scope.markers.length; i++ ) {
+                        var mlat = $scope.markers[i].position.lat();
+                        var mlng = $scope.markers[i].position.lng();
+                        var dLat  = rad(mlat - lat);
+                        var dLong = rad(mlng - lng);
+                        var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                            Math.cos(rad(lat)) * Math.cos(rad(lat)) * Math.sin(dLong/2) * Math.sin(dLong/2);
+                        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                        var d = R * c;
+                        distances[i] = d;
+                        if ( closest == -1 || d < distances[closest] ) {
+                            closest = i;
+                        }
+                    }
+
+                    console.log($scope.markers,$scope.markers[closest].title);
+                    $scope.user.service = $scope.markers[closest].service;
+                    setTimeout(function() {
+                    	$scope.$apply();
+                    }, 0);
+    			},
+    			function(errGeolocation){
+    				if(errGeolocation.code == 1){
+    					siteFactory.toast("Geolocalización bloqueada por usuario");
+    				}
+    				else {
+    					siteFactory.toast("Error con la geolocalización: '" + errGeolocation.message + "'");
+    				}
+    			}
+    		);
+    	}
+    	else {
+		  console.log('Geolocation is not supported for this Browser/OS.');
+		}
+    };
+
+    function createFilterFor(query) {
+
+      var lowercaseQuery = angular.lowercase(query);
+
+      return function filterFn(service) {
+        return (service.name.toLowerCase().indexOf(lowercaseQuery) > -1);
+      };
+
+    }
+
+	$scope.querySearch = function(query){
+		return $scope.services.filter(createFilterFor(query));
+	};
+
+	$scope.canSave = function(){
+		return $scope.user.name && $scope.user.idType && $scope.user.idValue && $scope.user.mail && $scope.user.service;
+	};
+
+	$scope.setResponse = function(res){
+		$scope.response = res;
+	}
+
+	$scope.signup = function(){
+		console.log("user",$scope.user)
+		$http({method: "POST", url: 'user', data: {user: $scope.user, response: $scope.response}}).then(
+			function(responseOK){
+				$state.go('home');
+				siteFactory.toast("Registro en proceso. Revise su email para confirmar");
+			},
+			function(responseError){
+				console.log("Response Error: ", responseError);
+				siteFactory.toast(responseError.data);
+			}
+		);
+	}
+})
 
 .directive('chooseFile', function() {
     return {
@@ -497,7 +735,6 @@ angular.module( 'donantesApp',
 })
 
 .controller('mailController', function($scope, siteFactory, $http){
-	$scope.currentNavItem = 'page1';
 
 	$scope.mail = {
 		subject: "",

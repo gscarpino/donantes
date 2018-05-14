@@ -5,6 +5,7 @@ var server = require('./server.js').init(),
 	donorsController = require('./controllers/donors.js'),
 	donationsController = require('./controllers/donations.js'),
     servicesController = require('./controllers/services.js'),
+    usersController = require('./controllers/users.js'),
     mailerController;
 
 
@@ -52,4 +53,5 @@ schemas.init(args.local, function(models){
     donorsController.init(app, models);
     donationsController.init(app, models);
     servicesController.init(app, models);
+    usersController.init(app, models);
 });

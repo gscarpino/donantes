@@ -3,12 +3,24 @@ var shortId = require('shortid');
 var usersSchemaOptions = {
 	_id: {type: String, default: shortId.generate},
 	username: {type: String, unique: true, index: true, required: true},
-	password: {type: String, unique: true, index: true, required: true},
+	password: {type: String, index: true},
 	token: {type: String, index: true},
 	service: {type: String, ref: 'services'},
 	lastLogin: Date,
 	lastAction: Date,
-	status: {type: Number, default: 201}
+	status: {type: Number, default: 423},
+	tries: {type: Number, default: 0},
+	registrationToken: String,
+	registrationDate: {type: Date, index: true},
+	role: {type: String, ref: 'roles'},
+	donor: {type: String, ref: 'donors'}
+};
+
+
+var rolesSchemaOptions = {
+	_id: {type: String, required: true, index: true, unique: true},
+	name: {type: String, required: true},
+	acl: {type: Object}
 };
 
 

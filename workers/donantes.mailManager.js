@@ -15,7 +15,7 @@ var options = {
     rk: "donantes.mail.send"
 }
 
-var footer = "<br><br><span style='font-size:0.7em'>Si desea desuscribirse haga click <a href='http://54.201.247.68/#/unsuscribe' target='_blank' style='color: black; text-decoration: none;'>aquí</a></span>";
+var footer = "<br><br><span style='font-size:0.7em'>Si desea desuscribirse haga click <a href='https://donantesvoluntariosdesangre.com.ar/#/unsuscribe' target='_blank' style='color: black; text-decoration: none;'>aquí</a></span>";
 
 hooks.subscribe(options, function(object){
     var message = object.message;

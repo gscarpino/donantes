@@ -4,15 +4,17 @@ var jwt = require('jsonwebtoken'),
 module.exports = {
     init: function(app, models){
 
-        var exceptions = ["\\B\\/unsuscribed\\/.*"];
+        var exceptions = ["\\B\\/unsuscribed\\/.*", "\\B\\/confirm\\/.*"];
 
         app.use(function(req, res, next){
             //TODO: cambiar a regular expresion por los parametros:
-
             switch(req.url){
                 case "/":
                 case "/login/":
                 case "/unsuscribe/":
+                case "/services/names":
+                case "/services/":
+                case "/user":
                     return next();
                     break;
                 default:

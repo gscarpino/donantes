@@ -37,7 +37,7 @@ module.exports = {
             }
 
             var mailBody = headerDiv + "<br>" + data.body + "<br>" + footerDiv;
-
+            //TODO: agregar a la query status sea ok
             var query = {
                 services: req.user.service,
                 mails:{
@@ -142,7 +142,6 @@ module.exports = {
         });
 
         app.post('/unsuscribe', function(req, res){
-            console.log("body", req.body)
             if(!req.body.email || !req.body.response){
                 return res.status(400).send('Url malformed');
             }

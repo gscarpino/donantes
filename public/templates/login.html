@@ -1,16 +1,44 @@
 <md-content flex layout-padding>
     <form name="loginForm">
         <div layout-gt-xs="row" layout-align="center">
+                <span ng-if="!services || services.length == 0">Cargando servicios...</span>
+                <md-autocomplete
+                  required
+                  md-input-minlength="2"
+                  md-no-cache="false"
+
+                  md-selected-item="service"
+                  md-search-text="ctrl.searchText"
+                  md-search-text-change="searchTextChange(ctrl.searchText)"
+                  md-items="_service in querySearch(ctrl.searchText)"
+                  md-item-text="_service.name"
+                  md-min-length="2"
+                  md-require-match
+                  md-floating-label="Servicio de donación de sangre"
+                  flex="40">
+                <md-item-template>
+                  <span md-highlight-text="ctrl.searchText" md-highlight-flags="^i">{{_service.name}}</span>
+                </md-item-template>
+                <div ng-messages="loginForm.autocompleteField.$error" ng-if="loginForm.autocompleteField.$touched">
+                    <div ng-message="required">Es <b>obligatorio</b> elegir un servicio</div>
+                    <div ng-message="md-require-match">Por favor, elige un servicio</div>
+                </div>
+                <md-not-found>
+                  No se encontraron servicios para "{{ctrl.searchText}}"
+                </md-not-found>
+              </md-autocomplete>
+        </div>
+        <div layout-gt-xs="row" layout-align="center">
             <md-input-container class="md-block" flex="40">
                 <label>Nombre de Usuario</label>
-                <input ng-model="username" type="text" required>
+                <input ng-model="username" type="text" required autocomplete="off">
             </md-input-container>
         </div>
 
         <div layout-gt-xs="row" layout-align="center">
             <md-input-container class="md-block" flex="40">
                 <label>Contraseña</label>
-                <input ng-model="password" type="password" required>
+                <input ng-model="password" type="password" required autocomplete="off">
             </md-input-container>
         </div>
 
@@ -22,7 +50,7 @@
             ></div>
         </div>
         <div layout-gt-xs="row" layout-align="center">
-            <md-button class="md-raised" ng-disabled="!loginForm.$valid" ng-click="login()">
+            <md-button class="md-raised" ng-disabled="!loginForm.$valid || !services || services.length == 0 || !response" ng-click="login()">
                 <md-tooltip md-direction="top" style="font-size:18px;">
                     Entrar
                 </md-tooltip>
